@@ -40,6 +40,10 @@ console.log(
       return {
         zoom: 0.9,
         compact_view: false,
+        consumer_1_unit_kw: false,
+        consumer_2_unit_kw: false,
+        consumer_3_unit_kw: false,
+        show_consumer_always: false,
         show_donut_border: false,
         show_neon_glow: true,
         show_comet_tail: false,
@@ -114,9 +118,16 @@ console.log(
           'color_solar': '--neon-yellow',
           'color_grid': '--neon-blue',
           'color_battery': '--neon-green',
+          'color_export': '--export-color',
           'color_consumer_1': '--consumer-1-color',
           'color_consumer_2': '--consumer-2-color',
           'color_consumer_3': '--consumer-3-color',
+          'color_pipe_solar': '--pipe-solar-color',
+          'color_pipe_grid': '--pipe-grid-color',
+          'color_pipe_battery': '--pipe-battery-color',
+          'color_pipe_consumer_1': '--pipe-consumer-1-color',
+          'color_pipe_consumer_2': '--pipe-consumer-2-color',
+          'color_pipe_consumer_3': '--pipe-consumer-3-color',
         };
         for (const [configKey, cssVar] of Object.entries(colorMap)) {
           if (this.config[configKey]) {
@@ -146,9 +157,16 @@ console.log(
         --neon-red: #ff3333;
         --grid-grey: #9e9e9e; 
         --export-purple: #a855f7;
+        --export-color: #ff3333;
         --consumer-1-color: #a855f7;
         --consumer-2-color: #f97316;
         --consumer-3-color: #06b6d4;
+        --pipe-solar-color: var(--neon-yellow);
+        --pipe-grid-color: var(--neon-blue);
+        --pipe-battery-color: var(--neon-green);
+        --pipe-consumer-1-color: var(--consumer-1-color);
+        --pipe-consumer-2-color: var(--consumer-2-color);
+        --pipe-consumer-3-color: var(--consumer-3-color);
         --flow-dasharray: 0 380; 
       }
       :host([data-theme-light]) {
@@ -159,6 +177,7 @@ console.log(
         --neon-red: #dc2626;
         --grid-grey: #6b7280;
         --export-purple: #7c3aed;
+        --export-color: #dc2626;
         --consumer-1-color: #7c3aed;
         --consumer-2-color: #ea580c;
         --consumer-3-color: #0891b2;
@@ -272,8 +291,8 @@ console.log(
       .bubble.tinted { background: rgba(255, 255, 255, 0.05); }
       .bubble.tinted.solar { background: color-mix(in srgb, var(--neon-yellow), transparent 85%); }
       .bubble.tinted.grid { background: color-mix(in srgb, var(--neon-blue), transparent 85%); }
-      .bubble.tinted.grid.exporting { background: color-mix(in srgb, var(--neon-red), transparent 85%); }
-      .bubble.grid.exporting { border-color: var(--neon-red); }
+      .bubble.tinted.grid.exporting { background: color-mix(in srgb, var(--export-color), transparent 85%); }
+      .bubble.grid.exporting { border-color: var(--export-color); }
       .bubble.tinted.battery { background: color-mix(in srgb, var(--neon-green), transparent 85%); }
       .bubble.tinted.c1 { background: color-mix(in srgb, var(--consumer-1-color), transparent 85%); }
       .bubble.tinted.c2 { background: color-mix(in srgb, var(--consumer-2-color), transparent 85%); }
@@ -286,6 +305,16 @@ console.log(
       .bubble.house.donut::before {
           content: ""; position: absolute; inset: 0; border-radius: 50%; padding: 4px; 
           background: var(--house-gradient);
+          -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+          -webkit-mask-composite: xor; mask-composite: exclude; z-index: -1; pointer-events: none;
+      }
+
+      .bubble.grid.donut { border: none !important; background: transparent; }
+      .bubble.grid.donut.tinted { background: color-mix(in srgb, var(--neon-blue), transparent 85%); }
+      .bubble.grid.donut.tinted.exporting { background: color-mix(in srgb, var(--export-color), transparent 85%); }
+      .bubble.grid.donut::before {
+          content: ""; position: absolute; inset: 0; border-radius: 50%; padding: 4px;
+          background: var(--grid-gradient, var(--neon-blue));
           -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
           -webkit-mask-composite: xor; mask-composite: exclude; z-index: -1; pointer-events: none;
       }
@@ -329,6 +358,7 @@ console.log(
       .glow.solar { box-shadow: 0 0 15px color-mix(in srgb, var(--neon-yellow), transparent 60%); }
       .glow.battery { box-shadow: 0 0 15px color-mix(in srgb, var(--neon-green), transparent 60%); }
       .glow.grid { box-shadow: 0 0 15px color-mix(in srgb, var(--neon-blue), transparent 60%); }
+      .glow.grid.exporting { box-shadow: 0 0 15px color-mix(in srgb, var(--export-color), transparent 60%); }
       .glow.c1 { box-shadow: 0 0 15px color-mix(in srgb, var(--consumer-1-color), transparent 60%); }
       .glow.c2 { box-shadow: 0 0 15px color-mix(in srgb, var(--consumer-2-color), transparent 60%); }
       .glow.c3 { box-shadow: 0 0 15px color-mix(in srgb, var(--consumer-3-color), transparent 60%); }
@@ -344,22 +374,22 @@ console.log(
       svg { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; pointer-events: none; }
       
       .bg-path { fill: none; stroke-width: 6; transition: opacity 0.3s ease; }
-      .bg-solar { stroke: var(--neon-yellow); }
-      .bg-grid { stroke: var(--neon-blue); }
-      .bg-battery { stroke: var(--neon-green); }
-      .bg-export { stroke: var(--neon-red); }
-      .bg-c1 { stroke: var(--consumer-1-color); }
-      .bg-c2 { stroke: var(--consumer-2-color); }
-      .bg-c3 { stroke: var(--consumer-3-color); }
+      .bg-solar { stroke: var(--pipe-solar-color); }
+      .bg-grid { stroke: var(--pipe-grid-color); }
+      .bg-battery { stroke: var(--pipe-battery-color); }
+      .bg-export { stroke: var(--export-color); }
+      .bg-c1 { stroke: var(--pipe-consumer-1-color); }
+      .bg-c2 { stroke: var(--pipe-consumer-2-color); }
+      .bg-c3 { stroke: var(--pipe-consumer-3-color); }
       
       .flow-line { 
         fill: none; stroke-width: var(--flow-stroke-width, 8px); stroke-linecap: round; stroke-dasharray: var(--flow-dasharray);   
         animation: dash linear infinite; opacity: 0; transition: opacity 0.5s;
       }
-      .flow-solar { stroke: var(--neon-yellow); }
-      .flow-grid { stroke: var(--neon-blue); }
-      .flow-battery { stroke: var(--neon-green); }
-      .flow-export { stroke: var(--neon-red); }
+      .flow-solar { stroke: var(--pipe-solar-color); }
+      .flow-grid { stroke: var(--pipe-grid-color); }
+      .flow-battery { stroke: var(--pipe-battery-color); }
+      .flow-export { stroke: var(--export-color); }
 
       @keyframes dash { to { stroke-dashoffset: -1500; } }
 
@@ -367,10 +397,10 @@ console.log(
         font-size: 10px; font-weight: bold; text-anchor: middle; fill: #fff; filter: transition: opacity 0.3s ease;
       }
       .flow-text.no-shadow { filter: none; }
-      .text-solar { fill: var(--neon-yellow); }
-      .text-grid { fill: var(--neon-blue); }
-      .text-export { fill: var(--neon-red); }
-      .text-battery { fill: var(--neon-green); }
+      .text-solar { fill: var(--pipe-solar-color); }
+      .text-grid { fill: var(--pipe-grid-color); }
+      .text-export { fill: var(--export-color); }
+      .text-battery { fill: var(--pipe-battery-color); }
     `;
     }
 
@@ -423,6 +453,11 @@ console.log(
     _getConsumerColor(index) {
       const style = getComputedStyle(this);
       return style.getPropertyValue(`--consumer-${index}-color`).trim() || ['#a855f7', '#f97316', '#06b6d4'][index - 1];
+    }
+
+    _getConsumerPipeColor(index) {
+      const style = getComputedStyle(this);
+      return style.getPropertyValue(`--pipe-consumer-${index}-color`).trim() || this._getConsumerColor(index);
     }
 
     // --- DOM NODE SVG GENERATOR ---
@@ -478,6 +513,9 @@ console.log(
         const state = this.hass.states[entity];
         return state ? parseFloat(state.state) || 0 : 0;
       };
+      const getValKw = (entity, isKw) => {
+        return getVal(entity) * (isKw ? 1000 : 1);
+      };
 
       const solar = entities.solar ? Math.max(0, getVal(entities.solar)) : 0;
       const hasGridCombined = !!(entities.grid_combined && entities.grid_combined !== "");
@@ -488,7 +526,7 @@ console.log(
       if (this.config.invert_battery) {
         battery *= -1;
       }
-      let c1Val = entities.consumer_1 ? getVal(entities.consumer_1) : 0; // EV Value
+      let c1Val = entities.consumer_1 ? getValKw(entities.consumer_1, this.config.consumer_1_unit_kw === true) : 0; // EV Value
       if (this.config.invert_consumer_1) { c1Val *= -1; }
       c1Val = Math.abs(c1Val);
 
@@ -778,16 +816,20 @@ console.log(
         const state = this.hass.states[entity];
         return state ? parseFloat(state.state) || 0 : 0;
       };
+      const getValKw = (entity, isKw) => {
+        return getVal(entity) * (isKw ? 1000 : 1);
+      };
 
-      let c1Val = entities.consumer_1 ? getVal(entities.consumer_1) : 0;
+      let c1Val = entities.consumer_1 ? getValKw(entities.consumer_1, this.config.consumer_1_unit_kw === true) : 0;
       if (this.config.invert_consumer_1) { c1Val *= -1; }
       c1Val = Math.abs(c1Val);
-      const c2Val = entities.consumer_2 ? getVal(entities.consumer_2) : 0;
-      const c3Val = entities.consumer_3 ? getVal(entities.consumer_3) : 0;
+      const c2Val = entities.consumer_2 ? getValKw(entities.consumer_2, this.config.consumer_2_unit_kw === true) : 0;
+      const c3Val = entities.consumer_3 ? getValKw(entities.consumer_3, this.config.consumer_3_unit_kw === true) : 0;
 
-      const showC1 = (entities.consumer_1 && Math.round(c1Val) > 0);
-      const showC2 = (entities.consumer_2 && Math.round(c2Val) > 0);
-      const showC3 = (entities.consumer_3 && Math.round(c3Val) > 0);
+      const alwaysShowConsumer = this.config.show_consumer_always === true;
+      const showC1 = (entities.consumer_1 && (alwaysShowConsumer || Math.round(c1Val) > 0));
+      const showC2 = (entities.consumer_2 && (alwaysShowConsumer || Math.round(c2Val) > 0));
+      const showC3 = (entities.consumer_3 && (alwaysShowConsumer || Math.round(c3Val) > 0));
       const anyBottomVisible = showC1 || showC2 || showC3;
 
       const solar = hasSolar ? getVal(entities.solar) : 0;
@@ -928,8 +970,28 @@ console.log(
       const isGridActive = Math.round(gridImport) > 0 || Math.round(gridExport) > 0;
       const isGridExporting = Math.round(gridExport) > 0 && Math.round(gridImport) === 0;
 
+      // --- Grid Donut Gradient ---
+      let gridGradientVal = '';
+      if (showDonut && hasGrid && isGridActive) {
+        const gridTotal = gridToHouse + gridToBatt + gridExport;
+        if (gridTotal > 0) {
+          const gPctToHouse = (gridToHouse / gridTotal) * 100;
+          const gPctToBatt = (gridToBatt / gridTotal) * 100;
+          const gPctExport = (gridExport / gridTotal) * 100;
+          let gStops = [];
+          let gCurrent = 0;
+          if (gPctToHouse > 0) { gStops.push(`var(--neon-blue) ${gCurrent}% ${gCurrent + gPctToHouse}%`); gCurrent += gPctToHouse; }
+          if (gPctToBatt > 0) { gStops.push(`var(--neon-green) ${gCurrent}% ${gCurrent + gPctToBatt}%`); gCurrent += gPctToBatt; }
+          if (gPctExport > 0) { gStops.push(`var(--export-color) ${gCurrent}% ${gCurrent + gPctExport}%`); gCurrent += gPctExport; }
+          if (gCurrent < 99.9) { gStops.push(`var(--neon-blue) ${gCurrent}% 100%`); }
+          gridGradientVal = `conic-gradient(from 330deg, ${gStops.join(', ')})`;
+        } else {
+          gridGradientVal = isGridExporting ? 'var(--export-color)' : 'var(--neon-blue)';
+        }
+      }
+
       const solarColor = isSolarActive ? 'var(--neon-yellow)' : 'var(--secondary-text-color)';
-      const gridColor = isGridExporting ? 'var(--neon-red)' : (isGridActive ? 'var(--neon-blue)' : 'var(--secondary-text-color)');
+      const gridColor = isGridExporting ? 'var(--export-color)' : (isGridActive ? 'var(--neon-blue)' : 'var(--secondary-text-color)');
 
       const getAnimStyle = (val) => {
         if (val <= 1) return "opacity: 0;";
@@ -1061,6 +1123,11 @@ console.log(
       const pathSolarBatt = "M 50 70 Q 210 -20 370 70";
       const pathGridImport = "M 210 160 L 210 220";
       const pathGridExport = "M 95 115 Q 130 145 165 115";
+      const pathHouseExport = "M 210 220 L 210 160";
+      const exportFromSolar = solarVal > 1;
+      const activeExportPath = exportFromSolar ? pathGridExport : pathHouseExport;
+      const exportTextX = exportFromSolar ? '130' : '185';
+      const exportTextY = exportFromSolar ? '145' : '195';
       const pathGridToBatt = "M 255 115 Q 290 145 325 115";
       const pathBattHouse = "M 370 160 Q 370 265 255 265";
       const pathHouseC1 = "M 165 265 Q 50 265 50 370";
@@ -1083,33 +1150,33 @@ console.log(
                     <path class="bg-path bg-solar" d="${pathSolarBatt}" style="${getPipeStyle(solarToBatt)} ${styleSolarBatt}" />
                     
                     <path class="bg-path bg-grid" d="${pathGridImport}" style="${getPipeStyle(gridToHouse)} ${styleGrid}" />
-                    <path class="bg-path bg-export" d="${pathGridExport}" style="${getPipeStyle(gridExport)} ${styleGrid}" />
+                    <path class="bg-path bg-export" d="${activeExportPath}" style="${getPipeStyle(gridExport)} ${styleGrid}" />
                     <path class="bg-path bg-grid" d="${pathGridToBatt}" style="${getPipeStyle(gridToBatt)} ${styleGridBatt}" />
                     
                     <path class="bg-path bg-battery" d="${pathBattHouse}" style="${getPipeStyle(batteryDischarge)} ${styleBattery}" />
 
-                    <path d="${pathHouseC1}" fill="none" stroke="${this._getConsumerColor(1)}" stroke-width="6" style="${getConsumerPipeStyle(showC1, c1Val)}" />
-                    <path d="${pathHouseC2}" fill="none" stroke="${this._getConsumerColor(2)}" stroke-width="6" style="${getConsumerPipeStyle(showC2, c2Val)}" />
-                    <path d="${pathHouseC3}" fill="none" stroke="${this._getConsumerColor(3)}" stroke-width="6" style="${getConsumerPipeStyle(showC3, c3Val)}" />
+                    <path d="${pathHouseC1}" fill="none" stroke="${this._getConsumerPipeColor(1)}" stroke-width="6" style="${getConsumerPipeStyle(showC1, c1Val)}" />
+                    <path d="${pathHouseC2}" fill="none" stroke="${this._getConsumerPipeColor(2)}" stroke-width="6" style="${getConsumerPipeStyle(showC2, c2Val)}" />
+                    <path d="${pathHouseC3}" fill="none" stroke="${this._getConsumerPipeColor(3)}" stroke-width="6" style="${getConsumerPipeStyle(showC3, c3Val)}" />
 
                     <path class="flow-line flow-solar" d="${pathSolarHouse}" style="${getAnimStyle(solarToHouse)} ${styleSolar}" />
                     <path class="flow-line flow-solar" d="${pathSolarBatt}" style="${getAnimStyle(solarToBatt)} ${styleSolarBatt}" />
                     
                     <path class="flow-line flow-grid" d="${pathGridImport}" style="${getAnimStyle(gridToHouse)} ${styleGrid}" />
-                    <path class="flow-line flow-export" d="${pathGridExport}" style="${getAnimStyle(gridExport)} ${styleGrid}" />
+                    <path class="flow-line flow-export" d="${activeExportPath}" style="${getAnimStyle(gridExport)} ${styleGrid}" />
                     <path class="flow-line flow-grid" d="${pathGridToBatt}" style="${getAnimStyle(gridToBatt)} ${styleGridBatt}" />
                     
                     <path class="flow-line flow-battery" d="${pathBattHouse}" style="${getAnimStyle(batteryDischarge)} ${styleBattery}" />
 
-                    <path class="flow-line" d="${pathHouseC1}" stroke="${this._getConsumerColor(1)}" style="${getConsumerAnimStyle(showC1, c1Val)}" />
-                    <path class="flow-line" d="${pathHouseC2}" stroke="${this._getConsumerColor(2)}" style="${getConsumerAnimStyle(showC2, c2Val)}" />
-                    <path class="flow-line" d="${pathHouseC3}" stroke="${this._getConsumerColor(3)}" style="${getConsumerAnimStyle(showC3, c3Val)}" />
+                    <path class="flow-line" d="${pathHouseC1}" stroke="${this._getConsumerPipeColor(1)}" style="${getConsumerAnimStyle(showC1, c1Val)}" />
+                    <path class="flow-line" d="${pathHouseC2}" stroke="${this._getConsumerPipeColor(2)}" style="${getConsumerAnimStyle(showC2, c2Val)}" />
+                    <path class="flow-line" d="${pathHouseC3}" stroke="${this._getConsumerPipeColor(3)}" style="${getConsumerAnimStyle(showC3, c3Val)}" />
 
                     <text x="100" y="235" class="${textClass} text-solar" style="${getTextStyle(solarToHouse, 'solar')} ${styleSolar}">${this._formatPower(solarToHouse)}</text>
                     <text x="210" y="45" class="${textClass} text-solar" style="${getTextStyle(solarToBatt, 'solar')} ${styleSolarBatt}">${this._formatPower(solarToBatt)}</text>
                     
                     <text x="235" y="195" class="${textClass} text-grid" style="${getTextStyle(gridToHouse, 'grid')} ${styleGrid}">${this._formatPower(gridToHouse)}</text>
-                    <text x="130" y="145" class="${textClass} text-export" style="${getTextStyle(gridExport, 'grid')} ${styleGrid}">${this._formatPower(gridExport)}</text>
+                    <text x="${exportTextX}" y="${exportTextY}" class="${textClass} text-export" style="${getTextStyle(gridExport, 'grid')} ${styleGrid}">${this._formatPower(gridExport)}</text>
                     <text x="290" y="145" class="${textClass} text-grid" style="${getTextStyle(gridToBatt, 'grid')} ${styleGridBatt}">${this._formatPower(gridToBatt)}</text>
                     
                     <text x="320" y="235" class="${textClass} text-battery" style="${getTextStyle(batteryDischarge, 'battery')} ${styleBattery}">${this._formatPower(batteryDischarge)}</text>
@@ -1125,7 +1192,8 @@ console.log(
                 </div>` : ''}
                 
                 ${hasGrid ? html`
-                <div class="bubble ${isGridActive ? (isGridExporting ? 'grid exporting' : 'grid') : 'inactive'} node node-grid ${tintClass} ${isGridActive ? glowClass : ''} ${getCustomClass(iconGrid)}"
+                <div class="bubble ${isGridActive ? (isGridExporting ? 'grid exporting' : 'grid') : 'inactive'} node node-grid ${showDonut && isGridActive ? 'donut' : ''} ${tintClass} ${isGridActive ? glowClass : ''} ${getCustomClass(iconGrid)}"
+                    style="${showDonut && isGridActive ? `--grid-gradient: ${gridGradientVal};` : ''}"
                     @click=${() => this._handleClick(entities.grid_combined || entities.grid)}>
                     ${renderMainIcon('grid', isGridExporting ? gridExport : gridImport, iconGrid, gridColor)}
                     ${renderSecondaryOrLabel(labelGridText, showLabelGrid, entities.secondary_grid, hasSecondaryGrid)}
