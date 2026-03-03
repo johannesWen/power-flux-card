@@ -84,3 +84,151 @@ You can configure the card directly via the visual editor in Home Assistant.
 - **Donut Chart**: Show the energy mix as a ring around the house.
 - **Comet Tail / Dashed Line**: Change the flow animation style.
 - **Compact View**: Switch to the bar chart layout.
+- **Color Options**: Define custom colors for each source and consumer.
+- **Grid Import/Export**: Configure separate or combined entities.
+- **Grid-to-Battery**: Optional direct sensor for Grid-to-Battery flow.
+- **Separate Battery Sensors**: Optional separate sensors for battery charge and discharge.
+- **Secondary Sensors**: Display alternative values in the main circles (e.g., daily yield, current charge power).
+
+
+<details>
+   <summary> <b>Custom Colors with card_mod and Jinja2 Templates</b></summary> 
+
+With the [card_mod](https://github.com/thomasloven/lovelace-card-mod) integration, you can dynamically override the CSS variables of the Power Flux Card using Jinja2 templates. This allows you to change colors based on sensor values — e.g., green solar icon during production, grey when idle.
+
+### Available CSS Variables
+
+| Variable | Description |
+|---|---|
+| `--neon-yellow` | Bubble color Solar |
+| `--neon-blue` | Bubble color Grid |
+| `--neon-green` | Bubble color Battery |
+| `--neon-pink` | Bubble color House |
+| `--pipe-solar-color` | Pipe color Solar |
+| `--pipe-grid-color` | Pipe color Grid |
+| `--pipe-battery-color` | Pipe color Battery |
+| `--icon-solar-color` | Icon color Solar |
+| `--icon-grid-color` | Icon color Grid |
+| `--icon-battery-color` | Icon color Battery |
+| `--icon-house-color` | Icon color House |
+| `--icon-consumer-1-color` | Icon color Consumer 1 |
+| `--text-solar-color` | Text color Solar |
+| `--text-grid-color` | Text color Grid |
+| `--text-battery-color` | Text color Battery |
+| `--text-house-color` | Text color House |
+| `--text-consumer-1-color` | Text color Consumer 1 |
+| `--consumer-1-color` | Bubble color Consumer 1 |
+| `--consumer-2-color` | Bubble color Consumer 2 |
+| `--consumer-3-color` | Bubble color Consumer 3 |
+| `--export-color` | Color for Export |
+
+### Example 1: Solar Icon — green during production, grey when idle
+
+```yaml
+type: custom:power-flux-card
+entities:
+  solar: sensor.solar_power
+  grid: sensor.grid_power
+  battery: sensor.battery_power
+  battery_soc: sensor.battery_soc
+card_mod:
+  style: |
+    power-flux-card {
+      {% if states('sensor.solar_power') | float > 0 %}
+        --icon-solar-color: #00ff88;
+      {% else %}
+        --icon-solar-color: #9e9e9e;
+      {% endif %}
+    }
+```
+
+### Example 2: Grid text color — red on export, blue on import
+
+```yaml
+type: custom:power-flux-card
+entities:
+  solar: sensor.solar_power
+  grid_combined: sensor.grid_power_combined
+  battery: sensor.battery_power
+  battery_soc: sensor.battery_soc
+card_mod:
+  style: |
+    power-flux-card {
+      {% if states('sensor.grid_power_combined') | float < 0 %}
+        --text-grid-color: #ff3333;
+      {% else %}
+        --text-grid-color: #3b82f6;
+      {% endif %}
+    }
+```
+
+### Example 3: Battery bubble — color based on State of Charge (SoC)
+
+```yaml
+type: custom:power-flux-card
+entities:
+  solar: sensor.solar_power
+  grid: sensor.grid_power
+  battery: sensor.battery_power
+  battery_soc: sensor.battery_soc
+card_mod:
+  style: |
+    power-flux-card {
+      {% set soc = states('sensor.battery_soc') | float %}
+      {% if soc > 80 %}
+        --neon-green: #00ff88;
+      {% elif soc > 30 %}
+        --neon-green: #f59e0b;
+      {% else %}
+        --neon-green: #ff3333;
+      {% endif %}
+    }
+```
+
+### Example 4: Consumer 1 pipe — visible only at high power, otherwise transparent
+
+```yaml
+type: custom:power-flux-card
+entities:
+  solar: sensor.solar_power
+  grid: sensor.grid_power
+  battery: sensor.battery_power
+  battery_soc: sensor.battery_soc
+  consumer_1: sensor.wallbox_power
+card_mod:
+  style: |
+    power-flux-card {
+      {% if states('sensor.wallbox_power') | float > 500 %}
+        --pipe-consumer-1-color: #a855f7;
+        --icon-consumer-1-color: #a855f7;
+      {% else %}
+        --pipe-consumer-1-color: rgba(168, 85, 247, 0.2);
+        --icon-consumer-1-color: #9e9e9e;
+      {% endif %}
+    }
+```
+
+### Example 5: Multiple colors at once — night mode (everything dimmed when Solar = 0)
+
+```yaml
+type: custom:power-flux-card
+entities:
+  solar: sensor.solar_power
+  grid: sensor.grid_power
+  battery: sensor.battery_power
+  battery_soc: sensor.battery_soc
+  consumer_1: sensor.wallbox_power
+card_mod:
+  style: |
+    power-flux-card {
+      {% if states('sensor.solar_power') | float == 0 %}
+        --icon-solar-color: #555555;
+        --text-solar-color: #777777;
+        --neon-yellow: #666633;
+        --pipe-solar-color: #444422;
+      {% endif %}
+    }
+```
+
+> **Note:** card_mod must be installed separately via HACS. Templates are evaluated on every state update, so colors change in real time.
+</details>
