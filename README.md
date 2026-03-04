@@ -133,7 +133,7 @@ entities:
   battery_soc: sensor.battery_soc
 card_mod:
   style: |
-    power-flux-card {
+    :host {
       {% if states('sensor.solar_power') | float > 0 %}
         --icon-solar-color: #00ff88;
       {% else %}
@@ -153,7 +153,7 @@ entities:
   battery_soc: sensor.battery_soc
 card_mod:
   style: |
-    power-flux-card {
+    :host {
       {% if states('sensor.grid_power_combined') | float < 0 %}
         --text-grid-color: #ff3333;
       {% else %}
@@ -173,7 +173,7 @@ entities:
   battery_soc: sensor.battery_soc
 card_mod:
   style: |
-    power-flux-card {
+    :host {
       {% set soc = states('sensor.battery_soc') | float %}
       {% if soc > 80 %}
         --neon-green: #00ff88;
@@ -197,7 +197,7 @@ entities:
   consumer_1: sensor.wallbox_power
 card_mod:
   style: |
-    power-flux-card {
+    :host {
       {% if states('sensor.wallbox_power') | float > 500 %}
         --pipe-consumer-1-color: #a855f7;
         --icon-consumer-1-color: #a855f7;
@@ -220,7 +220,7 @@ entities:
   consumer_1: sensor.wallbox_power
 card_mod:
   style: |
-    power-flux-card {
+    :host {
       {% if states('sensor.solar_power') | float == 0 %}
         --icon-solar-color: #555555;
         --text-solar-color: #777777;
