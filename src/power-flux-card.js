@@ -40,6 +40,7 @@ console.log(
       return {
         zoom: 0.9,
         compact_view: false,
+        compact_details: false,
         consumer_1_unit_kw: false,
         consumer_2_unit_kw: false,
         consumer_3_unit_kw: false,
@@ -126,12 +127,16 @@ console.log(
           'color_consumer_1': '--consumer-1-color',
           'color_consumer_2': '--consumer-2-color',
           'color_consumer_3': '--consumer-3-color',
+          'color_consumer_4': '--consumer-4-color',
+          'color_consumer_5': '--consumer-5-color',
           'color_pipe_solar': '--pipe-solar-color',
           'color_pipe_grid': '--pipe-grid-color',
           'color_pipe_battery': '--pipe-battery-color',
           'color_pipe_consumer_1': '--pipe-consumer-1-color',
           'color_pipe_consumer_2': '--pipe-consumer-2-color',
           'color_pipe_consumer_3': '--pipe-consumer-3-color',
+          'color_pipe_consumer_4': '--pipe-consumer-4-color',
+          'color_pipe_consumer_5': '--pipe-consumer-5-color',
           'color_house': '--neon-pink',
           'color_icon_solar': '--icon-solar-color',
           'color_icon_grid': '--icon-grid-color',
@@ -140,6 +145,8 @@ console.log(
           'color_icon_consumer_1': '--icon-consumer-1-color',
           'color_icon_consumer_2': '--icon-consumer-2-color',
           'color_icon_consumer_3': '--icon-consumer-3-color',
+          'color_icon_consumer_4': '--icon-consumer-4-color',
+          'color_icon_consumer_5': '--icon-consumer-5-color',
           'color_text_solar': '--text-solar-color',
           'color_text_grid': '--text-grid-color',
           'color_text_battery': '--text-battery-color',
@@ -147,6 +154,17 @@ console.log(
           'color_text_consumer_1': '--text-consumer-1-color',
           'color_text_consumer_2': '--text-consumer-2-color',
           'color_text_consumer_3': '--text-consumer-3-color',
+          'color_text_consumer_4': '--text-consumer-4-color',
+          'color_text_consumer_5': '--text-consumer-5-color',
+          'color_secondary_solar': '--secondary-solar-color',
+          'color_secondary_grid': '--secondary-grid-color',
+          'color_secondary_battery': '--secondary-battery-color',
+          'color_secondary_house': '--secondary-house-color',
+          'color_secondary_consumer_1': '--secondary-consumer-1-color',
+          'color_secondary_consumer_2': '--secondary-consumer-2-color',
+          'color_secondary_consumer_3': '--secondary-consumer-3-color',
+          'color_secondary_consumer_4': '--secondary-consumer-4-color',
+          'color_secondary_consumer_5': '--secondary-consumer-5-color',
         };
         for (const [configKey, cssVar] of Object.entries(colorMap)) {
           if (this.config[configKey]) {
@@ -179,12 +197,16 @@ console.log(
         --consumer-1-color: #a855f7;
         --consumer-2-color: #f97316;
         --consumer-3-color: #06b6d4;
+        --consumer-4-color: #eab308;
+        --consumer-5-color: #6366f1;
         --pipe-solar-color: var(--neon-yellow);
         --pipe-grid-color: var(--neon-blue);
         --pipe-battery-color: var(--neon-green);
         --pipe-consumer-1-color: var(--consumer-1-color);
         --pipe-consumer-2-color: var(--consumer-2-color);
         --pipe-consumer-3-color: var(--consumer-3-color);
+        --pipe-consumer-4-color: var(--consumer-4-color);
+        --pipe-consumer-5-color: var(--consumer-5-color);
         --icon-solar-color: var(--neon-yellow);
         --icon-grid-color: var(--neon-blue);
         --icon-battery-color: var(--neon-green);
@@ -192,6 +214,8 @@ console.log(
         --icon-consumer-1-color: var(--consumer-1-color);
         --icon-consumer-2-color: var(--consumer-2-color);
         --icon-consumer-3-color: var(--consumer-3-color);
+        --icon-consumer-4-color: var(--consumer-4-color);
+        --icon-consumer-5-color: var(--consumer-5-color);
         --text-solar-color: var(--neon-yellow);
         --text-grid-color: var(--neon-blue);
         --text-battery-color: var(--neon-green);
@@ -199,6 +223,17 @@ console.log(
         --text-consumer-1-color: var(--consumer-1-color);
         --text-consumer-2-color: var(--consumer-2-color);
         --text-consumer-3-color: var(--consumer-3-color);
+        --text-consumer-4-color: var(--consumer-4-color);
+        --text-consumer-5-color: var(--consumer-5-color);
+        --secondary-solar-color: #888888;
+        --secondary-grid-color: #888888;
+        --secondary-battery-color: #888888;
+        --secondary-house-color: #888888;
+        --secondary-consumer-1-color: #888888;
+        --secondary-consumer-2-color: #888888;
+        --secondary-consumer-3-color: #888888;
+        --secondary-consumer-4-color: #888888;
+        --secondary-consumer-5-color: #888888;
         --flow-dasharray: 0 380; 
       }
       :host([data-theme-light]) {
@@ -212,6 +247,8 @@ console.log(
         --consumer-1-color: #7c3aed;
         --consumer-2-color: #ea580c;
         --consumer-3-color: #0891b2;
+        --consumer-4-color: #ca8a04;
+        --consumer-5-color: #4f46e5;
       }
       ha-card {
         padding: 0; 
@@ -286,6 +323,51 @@ console.log(
         white-space: nowrap;
         overflow: hidden;
       }
+
+      /* --- COMPACT DETAILS STYLES --- */
+      .compact-details {
+        display: flex;
+        gap: 12px;
+        margin-top: 5px;
+        padding: 10px 0px 4px;
+      }
+      .compact-details-column {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+        min-width: 0;
+        border-right: 1px solid var(--divider-color, #444);
+        padding-right: 8px;
+      }
+      .compact-details-header {
+        font-size: 11px;
+        font-weight: bold;
+        text-transform: uppercase;
+        text-align: right;
+        opacity: 0.5;
+        letter-spacing: 0.5px;
+        margin-bottom: 2px;
+        border-bottom: 1px solid var(--divider-color, #444);
+      }
+      .compact-detail-item {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        font-size: 13px;
+      }
+      .compact-detail-item ha-icon {
+        --mdc-icon-size: 17px;
+        flex-shrink: 0;
+      }
+      .compact-detail-label {
+        opacity: 0.7;
+        white-space: nowrap;
+      }
+      .compact-detail-value {
+        font-weight: bold;
+        margin-left: auto;
+      }
       
       /* --- STANDARD VIEW STYLES --- */
       .scale-wrapper {
@@ -323,6 +405,8 @@ console.log(
       .bubble.tinted.c1 { background: color-mix(in srgb, var(--consumer-1-color), transparent 85%); }
       .bubble.tinted.c2 { background: color-mix(in srgb, var(--consumer-2-color), transparent 85%); }
       .bubble.tinted.c3 { background: color-mix(in srgb, var(--consumer-3-color), transparent 85%); }
+      .bubble.tinted.c4 { background: color-mix(in srgb, var(--consumer-4-color), transparent 85%); }
+      .bubble.tinted.c5 { background: color-mix(in srgb, var(--consumer-5-color), transparent 85%); }
 
       .bubble.house { border-color: var(--neon-pink); }
       .bubble.house.tinted { background: color-mix(in srgb, var(--neon-pink), transparent 85%); }
@@ -362,6 +446,7 @@ console.log(
         font-weight: bold; font-size: 15px; white-space: nowrap; z-index: 2; transition: color 0.3s ease;
         line-height: 1.2; position: absolute; bottom: 11px; left: 0; width: 100%; text-align: center; margin: 0;
       }
+      .bubble.grid .value, .bubble.house .value { bottom: 15px; }
       .direction-arrow { font-size: 12px; margin-right: 0px; vertical-align: top; }
       
       @keyframes spin { 100% { transform: rotate(360deg); } }
@@ -379,6 +464,8 @@ console.log(
       .c1 { border-color: var(--consumer-1-color); }
       .c2 { border-color: var(--consumer-2-color); }
       .c3 { border-color: var(--consumer-3-color); }
+      .c4 { border-color: var(--consumer-4-color); }
+      .c5 { border-color: var(--consumer-5-color); }
       .inactive { border-color: var(--secondary-text-color); }
 
       .glow.solar { box-shadow: 0 0 15px color-mix(in srgb, var(--neon-yellow), transparent 60%); }
@@ -388,6 +475,8 @@ console.log(
       .glow.c1 { box-shadow: 0 0 15px color-mix(in srgb, var(--consumer-1-color), transparent 60%); }
       .glow.c2 { box-shadow: 0 0 15px color-mix(in srgb, var(--consumer-2-color), transparent 60%); }
       .glow.c3 { box-shadow: 0 0 15px color-mix(in srgb, var(--consumer-3-color), transparent 60%); }
+      .glow.c4 { box-shadow: 0 0 15px color-mix(in srgb, var(--consumer-4-color), transparent 60%); }
+      .glow.c5 { box-shadow: 0 0 15px color-mix(in srgb, var(--consumer-5-color), transparent 60%); }
 
       .node-solar { top: 70px; left: 5px; }     
       .node-grid { top: 70px; left: 165px; }     
@@ -396,25 +485,29 @@ console.log(
       .node-c1 { top: 370px; left: 5px; }
       .node-c2 { top: 370px; left: 165px; }
       .node-c3 { top: 370px; left: 325px; }
+      .node-c4 { top: 470px; left: 85px; }
+      .node-c5 { top: 470px; left: 245px; }
 
       svg { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; pointer-events: none; }
       
       .bg-path { fill: none; stroke-width: 6; transition: opacity 0.3s ease; }
-      .bg-solar { stroke: var(--pipe-solar-color); }
-      .bg-grid { stroke: var(--pipe-grid-color); }
-      .bg-battery { stroke: var(--pipe-battery-color); }
+      .bg-solar { stroke: var(--pipe-solar-color); opacity: var(--pipe-solar-opacity, 1); }
+      .bg-grid { stroke: var(--pipe-grid-color); opacity: var(--pipe-grid-opacity, 1); }
+      .bg-battery { stroke: var(--pipe-battery-color); opacity: var(--pipe-battery-opacity, 1); }
       .bg-export { stroke: var(--export-color); }
-      .bg-c1 { stroke: var(--pipe-consumer-1-color); }
-      .bg-c2 { stroke: var(--pipe-consumer-2-color); }
-      .bg-c3 { stroke: var(--pipe-consumer-3-color); }
+      .bg-c1 { stroke: var(--pipe-consumer-1-color); opacity: var(--pipe-consumer-1-opacity, 1); }
+      .bg-c2 { stroke: var(--pipe-consumer-2-color); opacity: var(--pipe-consumer-2-opacity, 1); }
+      .bg-c3 { stroke: var(--pipe-consumer-3-color); opacity: var(--pipe-consumer-3-opacity, 1); }
+      .bg-c4 { stroke: var(--pipe-consumer-4-color); opacity: var(--pipe-consumer-4-opacity, 1); }
+      .bg-c5 { stroke: var(--pipe-consumer-5-color); opacity: var(--pipe-consumer-5-opacity, 1); }
       
       .flow-line { 
         fill: none; stroke-width: var(--flow-stroke-width, 8px); stroke-linecap: round; stroke-dasharray: var(--flow-dasharray);   
         animation: dash linear infinite; opacity: 0; transition: opacity 0.5s;
       }
-      .flow-solar { stroke: var(--pipe-solar-color); }
-      .flow-grid { stroke: var(--pipe-grid-color); }
-      .flow-battery { stroke: var(--pipe-battery-color); }
+      .flow-solar { stroke: var(--pipe-solar-color); opacity: var(--pipe-solar-opacity, 1); }
+      .flow-grid { stroke: var(--pipe-grid-color); opacity: var(--pipe-grid-opacity, 1); }
+      .flow-battery { stroke: var(--pipe-battery-color); opacity: var(--pipe-battery-opacity, 1); }
       .flow-export { stroke: var(--export-color); }
 
       @keyframes dash { to { stroke-dashoffset: -1500; } }
@@ -479,7 +572,7 @@ console.log(
 
     _getConsumerColor(index) {
       const style = getComputedStyle(this);
-      return style.getPropertyValue(`--consumer-${index}-color`).trim() || ['#a855f7', '#f97316', '#06b6d4'][index - 1];
+      return style.getPropertyValue(`--consumer-${index}-color`).trim() || ['#a855f7', '#f97316', '#06b6d4', '#eab308', '#6366f1'][index - 1];
     }
 
     _getConsumerPipeColor(index) {
@@ -540,20 +633,20 @@ console.log(
         const state = this.hass.states[entity];
         return state ? parseFloat(state.state) || 0 : 0;
       };
-      const getValKw = (entity, isKw) => {
-        return getVal(entity) * (isKw ? 1000 : 1);
+      const getValUnit = (entity, unitKw) => {
+        return getVal(entity) * (unitKw ? 1000 : 1);
       };
 
-      const solar = entities.solar ? Math.max(0, getVal(entities.solar)) : 0;
+      const solar = entities.solar ? Math.max(0, getValUnit(entities.solar, this.config.solar_unit_kw === true)) : 0;
       const hasGridCombined = !!(entities.grid_combined && entities.grid_combined !== "");
-      const gridCombinedVal = hasGridCombined ? getVal(entities.grid_combined) : 0;
-      const gridMain = hasGridCombined ? gridCombinedVal : (entities.grid ? getVal(entities.grid) : 0);
-      const gridExportSensor = entities.grid_export ? getVal(entities.grid_export) : 0;
-      let battery = entities.battery ? getVal(entities.battery) : 0;
+      const gridCombinedVal = hasGridCombined ? getValUnit(entities.grid_combined, this.config.grid_unit_kw === true) : 0;
+      const gridMain = hasGridCombined ? gridCombinedVal : (entities.grid ? getValUnit(entities.grid, this.config.grid_unit_kw === true) : 0);
+      const gridExportSensor = entities.grid_export ? getValUnit(entities.grid_export, this.config.grid_unit_kw === true) : 0;
+      let battery = entities.battery ? getValUnit(entities.battery, this.config.battery_unit_kw === true) : 0;
       if (this.config.invert_battery) {
         battery *= -1;
       }
-      let c1Val = entities.consumer_1 ? getValKw(entities.consumer_1, this.config.consumer_1_unit_kw === true) : 0; // EV Value
+      let c1Val = entities.consumer_1 ? getValUnit(entities.consumer_1, this.config.consumer_1_unit_kw === true) : 0; // EV Value
       if (this.config.invert_consumer_1) { c1Val *= -1; }
       c1Val = Math.abs(c1Val);
 
@@ -585,7 +678,11 @@ console.log(
 
       if (batteryCharge > 0) {
         const hasGridToBattSensor = !!(entities.grid_to_battery && entities.grid_to_battery !== "");
-        if (hasGridToBattSensor) {
+        if (this.config.battery_charge_via_house === true) {
+          // Battery charges via house: no direct solar→batt or grid→batt pipes
+          solarToBatt = 0;
+          gridToBatt = 0;
+        } else if (hasGridToBattSensor) {
           gridToBatt = Math.abs(getVal(entities.grid_to_battery));
           solarToBatt = Math.max(0, batteryCharge - gridToBatt);
         } else {
@@ -766,6 +863,61 @@ console.log(
                         <ha-icon icon="${b.icon}" class="compact-icon" style="color: ${b.iconColor};"></ha-icon>
                     </div>` : '')}
                 </div>
+
+                ${this.config.compact_details ? html`
+                <!-- COMPACT DETAILS -->
+                <div class="compact-details">
+                    <!-- IN COLUMN -->
+                    <div class="compact-details-column">
+                        <div class="compact-details-header">In</div>
+                        ${solar > 0 ? html`
+                        <div class="compact-detail-item" @click=${() => entities.solar && this._handleClick(entities.solar)} style="cursor: ${entities.solar ? 'pointer' : 'default'};">
+                            <ha-icon icon="mdi:weather-sunny" style="color: var(--icon-solar-color);"></ha-icon>
+                            <span class="compact-detail-label">Solar</span>
+                            <span class="compact-detail-value" style="color: var(--text-solar-color, var(--neon-yellow));">${this._formatPower(solar)}</span>
+                        </div>` : ''}
+                        ${gridImport > 0 ? html`
+                        <div class="compact-detail-item" @click=${() => (entities.grid_combined || entities.grid) && this._handleClick(entities.grid_combined || entities.grid)} style="cursor: ${(entities.grid_combined || entities.grid) ? 'pointer' : 'default'};">
+                            <ha-icon icon="mdi:transmission-tower" style="color: var(--icon-grid-color);"></ha-icon>
+                            <span class="compact-detail-label">Grid</span>
+                            <span class="compact-detail-value" style="color: var(--text-grid-color, var(--neon-blue));">${this._formatPower(gridImport)}</span>
+                        </div>` : ''}
+                        ${batteryDischarge > 0 ? html`
+                        <div class="compact-detail-item" @click=${() => entities.battery && this._handleClick(entities.battery)} style="cursor: ${entities.battery ? 'pointer' : 'default'};">
+                            <ha-icon icon="mdi:battery-arrow-down" style="color: var(--icon-battery-color);"></ha-icon>
+                            <span class="compact-detail-label">Batterie</span>
+                            <span class="compact-detail-value" style="color: var(--text-battery-color, var(--neon-green));">${this._formatPower(batteryDischarge)}</span>
+                        </div>` : ''}
+                    </div>
+                    <!-- OUT COLUMN -->
+                    <div class="compact-details-column">
+                        <div class="compact-details-header">Out</div>
+                        ${destHouse > 0 ? html`
+                        <div class="compact-detail-item" @click=${() => entities.house && this._handleClick(entities.house)} style="cursor: ${entities.house ? 'pointer' : 'default'};">
+                            <ha-icon icon="mdi:home" style="color: var(--icon-house-color);"></ha-icon>
+                            <span class="compact-detail-label">Haus</span>
+                            <span class="compact-detail-value" style="color: var(--text-house-color, var(--neon-pink));">${this._formatPower(destHouse)}</span>
+                        </div>` : ''}
+                        ${batteryCharge > 0 ? html`
+                        <div class="compact-detail-item" @click=${() => entities.battery && this._handleClick(entities.battery)} style="cursor: ${entities.battery ? 'pointer' : 'default'};">
+                            <ha-icon icon="mdi:battery-arrow-up" style="color: var(--icon-battery-color);"></ha-icon>
+                            <span class="compact-detail-label">Batterie</span>
+                            <span class="compact-detail-value" style="color: var(--text-battery-color, var(--neon-green));">${this._formatPower(batteryCharge)}</span>
+                        </div>` : ''}
+                        ${evPower > 0 ? html`
+                        <div class="compact-detail-item" @click=${() => entities.consumer_1 && this._handleClick(entities.consumer_1)} style="cursor: ${entities.consumer_1 ? 'pointer' : 'default'};">
+                            <ha-icon icon="mdi:car-electric" style="color: var(--icon-consumer-1-color);"></ha-icon>
+                            <span class="compact-detail-label">${this.config.consumer_1_label || 'EV'}</span>
+                            <span class="compact-detail-value" style="color: var(--consumer-1-color);">${this._formatPower(evPower)}</span>
+                        </div>` : ''}
+                        ${gridExport > 0 ? html`
+                        <div class="compact-detail-item" @click=${() => (entities.grid_combined || entities.grid_export || entities.grid) && this._handleClick(entities.grid_combined || entities.grid_export || entities.grid)} style="cursor: ${(entities.grid_combined || entities.grid_export || entities.grid) ? 'pointer' : 'default'};">
+                            <ha-icon icon="mdi:arrow-right-box" style="color: var(--export-color);"></ha-icon>
+                            <span class="compact-detail-label">Export</span>
+                            <span class="compact-detail-value" style="color: var(--export-color);">${this._formatPower(gridExport)}</span>
+                        </div>` : ''}
+                    </div>
+                </div>` : ''}
             </div>
         </ha-card>
       `;
@@ -802,17 +954,8 @@ console.log(
       const labelGridText = this.config.grid_label || this._localize('card.label_grid');
       const labelBatteryText = this.config.battery_label || (entities.battery && this.hass.states[entities.battery] && this.hass.states[entities.battery].state > 0 ? '+' : '-') + " " + this._localize('card.label_battery');
       const labelHouseText = this.config.house_label || this._localize('card.label_house');
-
-      // CUSTOM ICONS
-      const iconSolar = this.config.solar_icon;
-      const iconGrid = this.config.grid_icon;
-      const iconBattery = this.config.battery_icon;
-
-      // SECONDARY SENSORS (display only)
-      const hasSecondarySolar = !!(entities.secondary_solar && entities.secondary_solar !== "");
-      const hasSecondaryGrid = !!(entities.secondary_grid && entities.secondary_grid !== "");
-      const hasSecondaryBattery = !!(entities.secondary_battery && entities.secondary_battery !== "");
-      
+      // Secondary Sensor für Haus
+      const hasSecondaryHouse = !!(entities.secondary_house && entities.secondary_house !== "");
       const getSecondaryVal = (entity) => {
         if (!entity) return '';
         const state = this.hass.states[entity];
@@ -829,6 +972,37 @@ console.log(
         return val.toFixed(1) + (unit ? ' ' + unit : '');
       };
 
+      // Resolve secondary sensor color based on entity key
+      const getSecondaryColor = (entityKey) => {
+        const colorMap = {
+          'secondary_solar': '--secondary-solar-color',
+          'secondary_grid': '--secondary-grid-color',
+          'secondary_battery': '--secondary-battery-color',
+          'secondary_house': '--secondary-house-color',
+          'secondary_consumer_1': '--secondary-consumer-1-color',
+          'secondary_consumer_2': '--secondary-consumer-2-color',
+          'secondary_consumer_3': '--secondary-consumer-3-color',
+          'secondary_consumer_4': '--secondary-consumer-4-color',
+          'secondary_consumer_5': '--secondary-consumer-5-color'
+        };
+        const cssVar = colorMap[entityKey];
+        if (cssVar) {
+          const style = getComputedStyle(this);
+          return style.getPropertyValue(cssVar).trim() || '#888888';
+        }
+        return '#888888';
+      };
+
+      // CUSTOM ICONS
+      const iconSolar = this.config.solar_icon;
+      const iconGrid = this.config.grid_icon;
+      const iconBattery = this.config.battery_icon;
+
+      // SECONDARY SENSORS (display only)
+      const hasSecondarySolar = !!(entities.secondary_solar && entities.secondary_solar !== "");
+      const hasSecondaryGrid = !!(entities.secondary_grid && entities.secondary_grid !== "");
+      const hasSecondaryBattery = !!(entities.secondary_battery && entities.secondary_battery !== "");
+      
       // Determine existence of main entities
       const hasSolar = !!(entities.solar && entities.solar !== "");
       const hasGridCombined = !!(entities.grid_combined && entities.grid_combined !== "");
@@ -836,9 +1010,7 @@ console.log(
       const hasBattery = !!(entities.battery && entities.battery !== "");
 
       const styleSolar = hasSolar ? '' : 'display: none;';
-      const styleSolarBatt = (hasSolar && hasBattery) ? '' : 'display: none;';
       const styleGrid = hasGrid ? '' : 'display: none;';
-      const styleGridBatt = (hasGrid && hasBattery) ? '' : 'display: none;';
       const styleBattery = hasBattery ? '' : 'display: none;';
 
       const textClass = showNeonGlow ? 'flow-text' : 'flow-text no-shadow';
@@ -855,6 +1027,11 @@ console.log(
       const getValKw = (entity, isKw) => {
         return getVal(entity) * (isKw ? 1000 : 1);
       };
+      // Consumer 4 & 5
+      let c4Val = entities.consumer_4 ? getValKw(entities.consumer_4, this.config.consumer_4_unit_kw === true) : 0;
+      let c5Val = entities.consumer_5 ? getValKw(entities.consumer_5, this.config.consumer_5_unit_kw === true) : 0;
+      c4Val = Math.abs(c4Val);
+      c5Val = Math.abs(c5Val);
 
       let c1Val = entities.consumer_1 ? getValKw(entities.consumer_1, this.config.consumer_1_unit_kw === true) : 0;
       if (this.config.invert_consumer_1) { c1Val *= -1; }
@@ -866,18 +1043,20 @@ console.log(
       const showC1 = (entities.consumer_1 && (alwaysShowConsumer || Math.round(c1Val) > 0));
       const showC2 = (entities.consumer_2 && (alwaysShowConsumer || Math.round(c2Val) > 0));
       const showC3 = (entities.consumer_3 && (alwaysShowConsumer || Math.round(c3Val) > 0));
-      const anyBottomVisible = showC1 || showC2 || showC3;
+      const showC4 = (entities.consumer_4 && (alwaysShowConsumer || Math.round(c4Val) > 0));
+      const showC5 = (entities.consumer_5 && (alwaysShowConsumer || Math.round(c5Val) > 0));
+      const anyBottomVisible = showC1 || showC2 || showC3 || showC4 || showC5;
 
       // Consumer 1 pipe threshold
       const hideC1Pipe = this.config.consumer_1_hide_pipe === true;
       const c1PipeThreshold = this.config.consumer_1_pipe_threshold || 0;
       const c1PipeActive = showC1 && (!hideC1Pipe || c1Val >= c1PipeThreshold);
 
-      const solar = hasSolar ? getVal(entities.solar) : 0;
-      const gridCombinedVal = hasGridCombined ? getVal(entities.grid_combined) : 0;
-      const gridMain = hasGridCombined ? gridCombinedVal : (hasGrid ? getVal(entities.grid) : 0);
-      const gridExpSensor = (hasGrid && entities.grid_export) ? getVal(entities.grid_export) : 0;
-      let battery = hasBattery ? getVal(entities.battery) : 0;
+      const solar = hasSolar ? getValKw(entities.solar, this.config.solar_unit_kw === true) : 0;
+      const gridCombinedVal = hasGridCombined ? getValKw(entities.grid_combined, this.config.grid_unit_kw === true) : 0;
+      const gridMain = hasGridCombined ? gridCombinedVal : (hasGrid ? getValKw(entities.grid, this.config.grid_unit_kw === true) : 0);
+      const gridExpSensor = (hasGrid && entities.grid_export) ? getValKw(entities.grid_export, this.config.grid_unit_kw === true) : 0;
+      let battery = hasBattery ? getValKw(entities.battery, this.config.battery_unit_kw === true) : 0;
       if (this.config.invert_battery) {
         battery *= -1;
       }
@@ -912,9 +1091,16 @@ console.log(
       let solarToBatt = 0;
       let gridToBatt = 0;
 
+      // Battery charge via house toggle
+      const batteryChargeViaHouse = this.config.battery_charge_via_house === true;
+
       if (hasBattery && batteryCharge > 0) {
         const hasGridToBattSensor = !!(entities.grid_to_battery && entities.grid_to_battery !== "");
-        if (hasGridToBattSensor) {
+        if (batteryChargeViaHouse) {
+          // Battery charges via house: no direct solar→batt or grid→batt pipes
+          solarToBatt = 0;
+          gridToBatt = 0;
+        } else if (hasGridToBattSensor) {
           // Use dedicated grid-to-battery sensor
           gridToBatt = Math.abs(getVal(entities.grid_to_battery));
           solarToBatt = Math.max(0, batteryCharge - gridToBatt);
@@ -937,9 +1123,16 @@ console.log(
       // Use house entity for display if defined, otherwise use calculated value
       const houseDisplay = (entities.house && entities.house !== "") ? getVal(entities.house) : house;
 
-      const isTopArcActive = (solarToBatt > 0);
-      const topShift = (isTopArcActive || (!hideInactive && hasSolar && hasBattery)) ? 0 : 50;
-      let baseHeight = anyBottomVisible ? 480 : 340;
+      // Solar→Batt arc only visible when battery is actively charging and not via house
+      const styleSolarBatt = (hasSolar && hasBattery && batteryCharge > 0 && !batteryChargeViaHouse) ? '' : 'display: none;';
+      // Grid→Batt pipe: only hide if entities missing; actual visibility handled by getPipeStyle (hideInactive)
+      const styleGridBatt = (hasGrid && hasBattery) ? '' : 'display: none;';
+
+      const isTopArcActive = (solarToBatt > 0) && !batteryChargeViaHouse;
+      const hasTopRow = hasSolar || hasGrid || hasBattery;
+      const topShift = !hasTopRow ? 190 : ((isTopArcActive || (!hideInactive && hasSolar && hasBattery && batteryCharge > 0 && !batteryChargeViaHouse)) ? 0 : 50);
+      const anyRow2Visible = showC4 || showC5;
+      let baseHeight = anyRow2Visible ? 580 : (anyBottomVisible ? 480 : 340);
       const contentHeight = baseHeight - topShift;
 
       const designWidth = 420;
@@ -1043,7 +1236,7 @@ console.log(
       const gridIconColor = (isGridActive && this.config.color_icon_grid) ? 'var(--icon-grid-color)' : gridColor;
       const gridTextColor = (isGridActive && this.config.color_text_grid) ? 'var(--text-grid-color)' : gridColor;
 
-      const getAnimStyle = (val) => {
+      const getAnimStyle = (val, opVar = null) => {
         if (val <= 1) return "opacity: 0;";
 
         // --- Dynamic speed based on power ---
@@ -1081,12 +1274,14 @@ console.log(
 
         const dynamicDash = `${dashSize} ${gapSize}`;
 
-        return `opacity: 1; animation-duration: ${duration}s; stroke-dasharray: ${dynamicDash};`;
+        const opStr = opVar ? `var(${opVar}, 1)` : '1';
+        return `opacity: ${opStr}; animation-duration: ${duration}s; stroke-dasharray: ${dynamicDash};`;
       };
 
-      const getPipeStyle = (val) => {
-        if (!hideInactive) return "opacity: 0.2;";
-        return val > 1 ? "opacity: 0.2;" : "opacity: 0;";
+      const getPipeStyle = (val, opVar = null) => {
+        const op = opVar ? `calc(var(${opVar}, 1) * 0.2)` : '0.2';
+        if (!hideInactive) return `opacity: ${op};`;
+        return val > 1 ? `opacity: ${op};` : "opacity: 0;";
       };
 
       const getTextStyle = (val, type) => {
@@ -1111,10 +1306,11 @@ console.log(
         return html`<div class="sub">${text}</div>`;
       };
 
-      const renderSecondaryOrLabel = (labelText, showLabel, secondaryEntity, hasSecondary) => {
+      const renderSecondaryOrLabel = (labelText, showLabel, secondaryEntity, hasSecondary, entityKey = null) => {
         if (hasSecondary) {
           const secVal = getSecondaryVal(secondaryEntity);
-          return html`<div class="sub secondary-val">${secVal}</div>`;
+          const secColor = entityKey ? getSecondaryColor(entityKey) : '#888888';
+          return html`<div class="sub secondary-val" style="color: ${secColor};">${secVal}</div>`;
         }
         return renderLabel(labelText, showLabel);
       };
@@ -1154,20 +1350,20 @@ console.log(
             <div class="bubble ${cssClass} ${cssClass.replace('c', 'node-c')} ${tintClass} ${glowClass}"
                 @click=${() => this._handleClick(entities[configKey])}>
                 ${iconContent}
-                ${renderSecondaryOrLabel(label, true, secEntity, hasSecondary)}
+                ${renderSecondaryOrLabel(label, true, secEntity, hasSecondary, `secondary_${configKey}`)}
                 <div class="value" style="${textStyle}">${this._formatPower(val)}</div>
             </div>
         `;
       };
 
-      const getConsumerPipeStyle = (isActive, val) => {
+      const getConsumerPipeStyle = (isActive, val, idx = null) => {
         if (!isActive) return "display: none;";
-        return getPipeStyle(val);
+        return getPipeStyle(val, idx ? `--pipe-consumer-${idx}-opacity` : null);
       };
 
-      const getConsumerAnimStyle = (isActive, val) => {
+      const getConsumerAnimStyle = (isActive, val, idx = null) => {
         if (!isActive) return "display: none;";
-        return getAnimStyle(val);
+        return getAnimStyle(val, idx ? `--pipe-consumer-${idx}-opacity` : null);
       };
 
       const pathSolarHouse = "M 50 160 Q 50 265 165 265";
@@ -1181,9 +1377,12 @@ console.log(
       const exportTextY = exportFromSolar ? '145' : '195';
       const pathGridToBatt = "M 255 115 Q 290 145 325 115";
       const pathBattHouse = "M 370 160 Q 370 265 255 265";
+      const pathHouseToBatt = "M 255 265 Q 370 265 370 160";
       const pathHouseC1 = "M 165 265 Q 50 265 50 370";
       const pathHouseC2 = "M 210 310 L 210 370";
       const pathHouseC3 = "M 255 265 Q 370 265 370 370";
+      const pathHouseC4 = "M 165 265 Q 90 370 130 470";
+      const pathHouseC5 = "M 255 265 Q 330 370 290 470";
 
       const houseTextStyle = this.config.color_text_house
         ? 'color: var(--text-house-color);'
@@ -1199,31 +1398,39 @@ console.log(
             <div class="absolute-container" style="height: ${baseHeight}px; top: -${topShift}px;">
                 <svg height="${baseHeight}" viewBox="0 0 420 ${baseHeight}" preserveAspectRatio="xMidYMid meet">
                     
-                    <path class="bg-path bg-solar" d="${pathSolarHouse}" style="${getPipeStyle(solarToHouse)} ${styleSolar}" />
-                    <path class="bg-path bg-solar" d="${pathSolarBatt}" style="${getPipeStyle(solarToBatt)} ${styleSolarBatt}" />
+                    <path class="bg-path bg-solar" d="${pathSolarHouse}" style="${getPipeStyle(solarToHouse, '--pipe-solar-opacity')} ${styleSolar}" />
+                    <path class="bg-path bg-solar" d="${pathSolarBatt}" style="${getPipeStyle(solarToBatt, '--pipe-solar-opacity')} ${styleSolarBatt}" />
                     
-                    <path class="bg-path bg-grid" d="${pathGridImport}" style="${getPipeStyle(gridToHouse)} ${styleGrid}" />
-                    <path class="bg-path bg-export" d="${activeExportPath}" style="${getPipeStyle(gridExport)} ${styleGrid}" />
-                    <path class="bg-path bg-grid" d="${pathGridToBatt}" style="${getPipeStyle(gridToBatt)} ${styleGridBatt}" />
+                    <path class="bg-path bg-grid" d="${pathGridImport}" style="${getPipeStyle(gridToHouse, '--pipe-grid-opacity')} ${styleGrid}" />
+                    <path class="bg-path bg-export" d="${activeExportPath}" style="${getPipeStyle(gridExport, '--pipe-grid-opacity')} ${styleGrid}" />
+                    <path class="bg-path bg-grid" d="${pathGridToBatt}" style="${getPipeStyle(gridToBatt, '--pipe-grid-opacity')} ${styleGridBatt}" />
                     
-                    <path class="bg-path bg-battery" d="${pathBattHouse}" style="${getPipeStyle(batteryDischarge)} ${styleBattery}" />
+                    <path class="bg-path bg-battery" d="${pathBattHouse}" style="${getPipeStyle(batteryDischarge, '--pipe-battery-opacity')} ${styleBattery}" />
 
-                    <path d="${pathHouseC1}" fill="none" stroke="${this._getConsumerPipeColor(1)}" stroke-width="6" style="${getConsumerPipeStyle(c1PipeActive, c1Val)}" />
-                    <path d="${pathHouseC2}" fill="none" stroke="${this._getConsumerPipeColor(2)}" stroke-width="6" style="${getConsumerPipeStyle(showC2, c2Val)}" />
-                    <path d="${pathHouseC3}" fill="none" stroke="${this._getConsumerPipeColor(3)}" stroke-width="6" style="${getConsumerPipeStyle(showC3, c3Val)}" />
+                    <path class="bg-path bg-battery" d="${pathHouseToBatt}" style="${(batteryChargeViaHouse && batteryCharge > 0) ? getPipeStyle(batteryCharge, '--pipe-battery-opacity') + ' ' + styleBattery : 'display:none;'}" />
 
-                    <path class="flow-line flow-solar" d="${pathSolarHouse}" style="${getAnimStyle(solarToHouse)} ${styleSolar}" />
-                    <path class="flow-line flow-solar" d="${pathSolarBatt}" style="${getAnimStyle(solarToBatt)} ${styleSolarBatt}" />
-                    
-                    <path class="flow-line flow-grid" d="${pathGridImport}" style="${getAnimStyle(gridToHouse)} ${styleGrid}" />
-                    <path class="flow-line flow-export" d="${activeExportPath}" style="${getAnimStyle(gridExport)} ${styleGrid}" />
-                    <path class="flow-line flow-grid" d="${pathGridToBatt}" style="${getAnimStyle(gridToBatt)} ${styleGridBatt}" />
-                    
-                    <path class="flow-line flow-battery" d="${pathBattHouse}" style="${getAnimStyle(batteryDischarge)} ${styleBattery}" />
+                    <path d="${pathHouseC1}" fill="none" stroke="${this._getConsumerPipeColor(1)}" stroke-width="6" style="${getConsumerPipeStyle(c1PipeActive, c1Val, 1)}" />
+                    <path d="${pathHouseC2}" fill="none" stroke="${this._getConsumerPipeColor(2)}" stroke-width="6" style="${getConsumerPipeStyle(showC2, c2Val, 2)}" />
+                    <path d="${pathHouseC3}" fill="none" stroke="${this._getConsumerPipeColor(3)}" stroke-width="6" style="${getConsumerPipeStyle(showC3, c3Val, 3)}" />
+                    <path d="${pathHouseC4}" fill="none" stroke="${this._getConsumerPipeColor(4)}" stroke-width="6" style="${getConsumerPipeStyle(showC4, c4Val, 4)}" />
+                    <path d="${pathHouseC5}" fill="none" stroke="${this._getConsumerPipeColor(5)}" stroke-width="6" style="${getConsumerPipeStyle(showC5, c5Val, 5)}" />
 
-                    <path class="flow-line" d="${pathHouseC1}" stroke="${this._getConsumerPipeColor(1)}" style="${getConsumerAnimStyle(c1PipeActive, c1Val)}" />
-                    <path class="flow-line" d="${pathHouseC2}" stroke="${this._getConsumerPipeColor(2)}" style="${getConsumerAnimStyle(showC2, c2Val)}" />
-                    <path class="flow-line" d="${pathHouseC3}" stroke="${this._getConsumerPipeColor(3)}" style="${getConsumerAnimStyle(showC3, c3Val)}" />
+                    <path class="flow-line flow-solar" d="${pathSolarHouse}" style="${getAnimStyle(solarToHouse, '--pipe-solar-opacity')} ${styleSolar}" />
+                    <path class="flow-line flow-solar" d="${pathSolarBatt}" style="${getAnimStyle(solarToBatt, '--pipe-solar-opacity')} ${styleSolarBatt}" />
+                    
+                    <path class="flow-line flow-grid" d="${pathGridImport}" style="${getAnimStyle(gridToHouse, '--pipe-grid-opacity')} ${styleGrid}" />
+                    <path class="flow-line flow-export" d="${activeExportPath}" style="${getAnimStyle(gridExport, '--pipe-grid-opacity')} ${styleGrid}" />
+                    <path class="flow-line flow-grid" d="${pathGridToBatt}" style="${getAnimStyle(gridToBatt, '--pipe-grid-opacity')} ${styleGridBatt}" />
+                    
+                    <path class="flow-line flow-battery" d="${pathBattHouse}" style="${getAnimStyle(batteryDischarge, '--pipe-battery-opacity')} ${styleBattery}" />
+
+                    <path class="flow-line flow-battery" d="${pathHouseToBatt}" style="${(batteryChargeViaHouse && batteryCharge > 0) ? getAnimStyle(batteryCharge, '--pipe-battery-opacity') + ' ' + styleBattery : 'display:none;'}" />
+
+                    <path class="flow-line" d="${pathHouseC1}" stroke="${this._getConsumerPipeColor(1)}" style="${getConsumerAnimStyle(c1PipeActive, c1Val, 1)}" />
+                    <path class="flow-line" d="${pathHouseC2}" stroke="${this._getConsumerPipeColor(2)}" style="${getConsumerAnimStyle(showC2, c2Val, 2)}" />
+                    <path class="flow-line" d="${pathHouseC3}" stroke="${this._getConsumerPipeColor(3)}" style="${getConsumerAnimStyle(showC3, c3Val, 3)}" />
+                    <path class="flow-line" d="${pathHouseC4}" stroke="${this._getConsumerPipeColor(4)}" style="${getConsumerAnimStyle(showC4, c4Val, 4)}" />
+                    <path class="flow-line" d="${pathHouseC5}" stroke="${this._getConsumerPipeColor(5)}" style="${getConsumerAnimStyle(showC5, c5Val, 5)}" />
 
                     <text x="100" y="235" class="${textClass} text-solar" style="${getTextStyle(solarToHouse, 'solar')} ${styleSolar}">${this._formatPower(solarToHouse)}</text>
                     <text x="210" y="45" class="${textClass} text-solar" style="${getTextStyle(solarToBatt, 'solar')} ${styleSolarBatt}">${this._formatPower(solarToBatt)}</text>
@@ -1234,13 +1441,15 @@ console.log(
                     
                     <text x="320" y="235" class="${textClass} text-battery" style="${getTextStyle(batteryDischarge, 'battery')} ${styleBattery}">${this._formatPower(batteryDischarge)}</text>
 
+                    <text x="320" y="235" class="${textClass} text-battery" style="${(batteryChargeViaHouse && batteryCharge > 0) ? getTextStyle(batteryCharge, 'battery') + ' ' + styleBattery : 'display:none;'}">${this._formatPower(batteryCharge)}</text>
+
                 </svg>
 
                 ${hasSolar ? html`
                 <div class="bubble ${isSolarActive ? 'solar' : 'inactive'} node-solar ${tintClass} ${isSolarActive ? glowClass : ''}"
                     @click=${() => this._handleClick(entities.solar)}>
                     ${renderMainIcon('solar', solarVal, iconSolar, solarColor)}
-                    ${renderSecondaryOrLabel(labelSolarText, showLabelSolar, entities.secondary_solar, hasSecondarySolar)}
+                    ${renderSecondaryOrLabel(labelSolarText, showLabelSolar, entities.secondary_solar, hasSecondarySolar, 'secondary_solar')}
                     <div class="value" style="${isSolarActive ? (this.config.color_text_solar ? 'color: var(--text-solar-color);' : getColorStyle('--neon-yellow')) : `color: ${solarColor};`}">${this._formatPower(solarVal)}</div>
                 </div>` : ''}
                 
@@ -1249,7 +1458,7 @@ console.log(
                     style="${showDonut && isGridActive ? `--grid-gradient: ${gridGradientVal};` : ''}"
                     @click=${() => this._handleClick(entities.grid_combined || entities.grid)}>
                     ${renderMainIcon('grid', isGridExporting ? gridExport : gridImport, iconGrid, gridIconColor)}
-                    ${renderSecondaryOrLabel(labelGridText, showLabelGrid, entities.secondary_grid, hasSecondaryGrid)}
+                    ${renderSecondaryOrLabel(labelGridText, showLabelGrid, entities.secondary_grid, hasSecondaryGrid, 'secondary_grid')}
                     <div class="value" style="color: ${gridTextColor};">
                         ${isGridExporting ? html`<span class="direction-arrow">&#9650;</span>` : (isGridActive ? html`<span class="direction-arrow">&#9660;</span>` : '')}
                         ${this._formatPower(isGridExporting ? gridExport : gridImport)}
@@ -1260,21 +1469,24 @@ console.log(
                 <div class="bubble battery node-battery ${tintClass} ${glowClass}"
                     @click=${() => this._handleClick(entities.battery)}>
                     ${renderMainIcon('battery', battSoc, iconBattery)}
-                    ${renderSecondaryOrLabel(labelBatteryText, showLabelBattery, entities.secondary_battery, hasSecondaryBattery)}
-                    <div class="value" style="${this.config.color_text_battery ? 'color: var(--text-battery-color);' : getColorStyle('--neon-green')}">${Math.round(battSoc)}%</div>
+                    ${renderSecondaryOrLabel(labelBatteryText, showLabelBattery, entities.secondary_battery, hasSecondaryBattery, 'secondary_battery')}
+                    <div class="value" style="${this.config.color_text_battery ? 'color: var(--text-battery-color);' : getColorStyle('--neon-green')}">${this.config.battery_show_power ? this._formatPower(battery) : Math.round(battSoc) + '%'}</div>
                 </div>` : ''}
                 
                 <div class="bubble house node-house ${showDonut ? 'donut' : ''} ${tintClass}" 
                     style="${houseBubbleStyle}"
                     @click=${() => this._handleClick(entities.house)}>
-                    ${renderMainIcon('house', 0, null, this.config.color_icon_house ? 'var(--icon-house-color)' : houseDominantColor)}
-                    ${renderLabel(labelHouseText, showLabelHouse)}
+                    ${renderMainIcon('house', 0, this.config.house_icon || null, this.config.color_icon_house ? 'var(--icon-house-color)' : houseDominantColor)}
+                    ${renderSecondaryOrLabel(labelHouseText, showLabelHouse, entities.secondary_house, hasSecondaryHouse, 'secondary_house')}
                     <div class="value" style="${houseTextStyle}">${this._formatPower(houseDisplay)}</div>
                 </div>
 
                 ${renderConsumer(showC1, 'c1', 'consumer_1', labelC1, 'car', c1Val, this._getConsumerColor(1))}
                 ${renderConsumer(showC2, 'c2', 'consumer_2', labelC2, 'heater', c2Val, this._getConsumerColor(2))}
                 ${renderConsumer(showC3, 'c3', 'consumer_3', labelC3, 'pool', c3Val, this._getConsumerColor(3))}
+
+                ${renderConsumer(showC4, 'c4', 'consumer_4', this.config.consumer_4_label || 'Consumer 4', null, c4Val, this._getConsumerColor(4))}
+                ${renderConsumer(showC5, 'c5', 'consumer_5', this.config.consumer_5_label || 'Consumer 5', null, c5Val, this._getConsumerColor(5))}
                 
             </div>
         </div>

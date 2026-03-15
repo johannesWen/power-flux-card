@@ -12,6 +12,7 @@ export default {
     "editor.invert_battery": "Wert umkehren (+/-)",
     "editor.label_toggle": "Label im Kreis anzeigen",
     "editor.compact_view": "Kompakte Ansicht (evcc)",
+    "editor.compact_details": "Details für Kompakte Ansicht",
     "editor.hide_inactive": "Inaktive Röhren ausblenden",
     "editor.entity": "Kombinierter Batterie Sensor (W)",
     "editor.label": "Beschriftung",
@@ -50,6 +51,14 @@ export default {
     "editor.consumer_pipe_threshold": "Pipe-Schwellenwert (Watt)",
     "editor.text_color": "Text",
     "editor.icon_color": "Icon",
+    "editor.secondary_color": "Secondary",
+    "editor.battery_charge_via_house": "Batterie-Ladung über Hausverbrauch umleiten",
+    "editor.battery_show_power": "Zeige Leistung statt SoC",
+    "editor.solar_unit_kw": "Solar in kW anzeigen",
+    "editor.grid_unit_kw": "Grid in kW anzeigen",
+    "editor.battery_unit_kw": "Batterie in kW anzeigen",
+    "editor.consumer_4_title": "⚡ Reihe 2 Links (Gelb)",
+    "editor.consumer_5_title": "💡 Reihe 2 Rechts (Indigo)",
   },
   card: {
     "card.label_solar": "Solar",
@@ -59,5 +68,7 @@ export default {
     "card.label_car": "E-Auto",
     "card.label_heater": "Heizung",
     "card.label_pool": "Pool",
+    "card.label_consumer_4": "Verbr. 4",
+    "card.label_consumer_5": "Verbr. 5",
   }
 };

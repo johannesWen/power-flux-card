@@ -70,8 +70,11 @@ class PowerFluxCardEditor extends LitElement {
                 'battery_charge', 'battery_discharge',
                 'house',
                 'consumer_1', 'consumer_2', 'consumer_3',
+                'consumer_4', 'consumer_5',
                 'secondary_solar', 'secondary_grid', 'secondary_battery',
-                'secondary_consumer_1', 'secondary_consumer_2', 'secondary_consumer_3'
+                'secondary_consumer_1', 'secondary_consumer_2', 'secondary_consumer_3',
+                'secondary_consumer_4', 'secondary_consumer_5',
+                'secondary_house'
             ];
 
             let newConfig = { ...this._config };
@@ -128,7 +131,7 @@ class PowerFluxCardEditor extends LitElement {
 
     _renderEntitySelector(entitySelectorSchema, value, configValue, label) {
         const val = value || "";
-        return html`
+            return html`
             <div class="entity-picker-wrapper">
                 <ha-selector
                     .hass=${this.hass}
@@ -166,12 +169,41 @@ class PowerFluxCardEditor extends LitElement {
     _renderColorPickerQuad(bubbleKey, pipeKey, textKey, iconKey, defaultColor) {
         const items = [
             { key: bubbleKey, label: this._localize('editor.color_picker'), default: defaultColor },
-        ];
+            ];
         if (pipeKey) items.push({ key: pipeKey, label: this._localize('editor.pipe_color'), default: defaultColor });
         items.push({ key: textKey, label: this._localize('editor.text_color'), default: defaultColor });
         items.push({ key: iconKey, label: this._localize('editor.icon_color'), default: defaultColor });
         return html`
             <div class="color-picker-quad">
+                ${items.map(item => {
+                    const color = this._config[item.key] || item.default;
+                    const hasCustom = !!this._config[item.key];
+                    return html`
+                        <div class="color-picker-row">
+                            <input type="color" 
+                                   .value=${color}
+                                   @input=${(e) => this._colorChanged(item.key, e)}>
+                            <span class="color-label">${item.label}</span>
+                            ${hasCustom ? html`<ha-icon class="color-reset-btn" 
+                                icon="mdi:refresh" 
+                                @click=${() => this._resetColor(item.key)}></ha-icon>` : ''}
+                        </div>
+                    `;
+                })}
+            </div>
+        `;
+    }
+
+    _renderColorPickerQuint(bubbleKey, pipeKey, textKey, iconKey, secondaryKey, defaultColor) {
+        const items = [
+            { key: bubbleKey, label: this._localize('editor.color_picker'), default: defaultColor },
+            ];
+        if (pipeKey) items.push({ key: pipeKey, label: this._localize('editor.pipe_color'), default: defaultColor });
+        items.push({ key: textKey, label: this._localize('editor.text_color'), default: defaultColor });
+        items.push({ key: iconKey, label: this._localize('editor.icon_color'), default: defaultColor });
+        items.push({ key: secondaryKey, label: this._localize('editor.secondary_color'), default: '#888888' });
+        return html`
+            <div class="color-picker-quint">
                 ${items.map(item => {
                     const color = this._config[item.key] || item.default;
                     const hasCustom = !!this._config[item.key];
@@ -330,6 +362,17 @@ class PowerFluxCardEditor extends LitElement {
       .color-picker-quad .color-picker-row {
           flex: 1;
       }
+      .color-picker-quint {
+          display: flex;
+          gap: 6px;
+      }
+      .color-picker-quint .color-picker-row {
+          flex: 1;
+      }
+      .color-picker-quint input[type="color"] {
+          width: 26px;
+          height: 26px;
+      }
     `;
     }
 
@@ -368,7 +411,7 @@ class PowerFluxCardEditor extends LitElement {
 
         ${this._renderEntitySelector(entitySelectorSchema, entities.secondary_solar || "", 'secondary_solar', this._localize('editor.secondary_sensor'))}
 
-        ${this._renderColorPickerQuad('color_solar', 'color_pipe_solar', 'color_text_solar', 'color_icon_solar', '#ffdd00')}
+        ${this._renderColorPickerQuint('color_solar', 'color_pipe_solar', 'color_text_solar', 'color_icon_solar', 'color_secondary_solar', '#ffdd00')}
 
         <div class="separator"></div>
 
@@ -379,6 +422,14 @@ class PowerFluxCardEditor extends LitElement {
                 @change=${this._valueChanged}
             ></ha-switch>
             <div class="switch-label">${this._localize('editor.label_toggle')}</div>
+        </div>
+        <div class="switch-row">
+            <ha-switch
+                .checked=${this._config.solar_unit_kw === true}
+                .configValue=${'solar_unit_kw'}
+                @change=${this._valueChanged}
+            ></ha-switch>
+            <div class="switch-label">${this._localize('editor.solar_unit_kw')}</div>
         </div>
 
         <div class="switch-row">
@@ -436,7 +487,7 @@ class PowerFluxCardEditor extends LitElement {
 
         ${this._renderEntitySelector(entitySelectorSchema, entities.secondary_grid || "", 'secondary_grid', this._localize('editor.secondary_sensor'))}
 
-        ${this._renderColorPickerQuad('color_grid', 'color_pipe_grid', 'color_text_grid', 'color_icon_grid', '#3b82f6')}
+        ${this._renderColorPickerQuint('color_grid', 'color_pipe_grid', 'color_text_grid', 'color_icon_grid', 'color_secondary_grid', '#3b82f6')}
 
         ${this._renderColorPicker('color_export', this._localize('editor.export_color'), '#ff3333')}
 
@@ -449,6 +500,14 @@ class PowerFluxCardEditor extends LitElement {
                 @change=${this._valueChanged}
             ></ha-switch>
             <div class="switch-label">${this._localize('editor.label_toggle')}</div>
+        </div>
+        <div class="switch-row">
+            <ha-switch
+                .checked=${this._config.grid_unit_kw === true}
+                .configValue=${'grid_unit_kw'}
+                @change=${this._valueChanged}
+            ></ha-switch>
+            <div class="switch-label">${this._localize('editor.grid_unit_kw')}</div>
         </div>
 
         <div class="switch-row">
@@ -514,7 +573,7 @@ class PowerFluxCardEditor extends LitElement {
 
         ${this._renderEntitySelector(entitySelectorSchema, entities.secondary_battery || "", 'secondary_battery', this._localize('editor.secondary_sensor'))}
 
-        ${this._renderColorPickerQuad('color_battery', 'color_pipe_battery', 'color_text_battery', 'color_icon_battery', '#00ff88')}
+        ${this._renderColorPickerQuint('color_battery', 'color_pipe_battery', 'color_text_battery', 'color_icon_battery', 'color_secondary_battery', '#00ff88')}
         
         <div class="separator"></div>
         
@@ -525,6 +584,14 @@ class PowerFluxCardEditor extends LitElement {
                 @change=${this._valueChanged}
             ></ha-switch>
             <div class="switch-label">${this._localize('editor.label_toggle')}</div>
+        </div>
+        <div class="switch-row">
+            <ha-switch
+                .checked=${this._config.battery_unit_kw === true}
+                .configValue=${'battery_unit_kw'}
+                @change=${this._valueChanged}
+            ></ha-switch>
+            <div class="switch-label">${this._localize('editor.battery_unit_kw')}</div>
         </div>
 
         <div class="switch-row">
@@ -544,6 +611,22 @@ class PowerFluxCardEditor extends LitElement {
             ></ha-switch>
             <div class="switch-label">${this._localize('editor.invert_battery')}</div>
         </div>
+            <div class="switch-row">
+                <ha-switch
+                    .checked=${this._config.battery_charge_via_house === true}
+                    .configValue=${'battery_charge_via_house'}
+                    @change=${this._valueChanged}
+                ></ha-switch>
+                <div class="switch-label">${this._localize('editor.battery_charge_via_house')}</div>
+            </div>
+            <div class="switch-row">
+                <ha-switch
+                    .checked=${this._config.battery_show_power === true}
+                    .configValue=${'battery_show_power'}
+                    @change=${this._valueChanged}
+                ></ha-switch>
+                <div class="switch-label">${this._localize('editor.battery_show_power')}</div>
+            </div>
       `;
     }
 
@@ -563,7 +646,26 @@ class PowerFluxCardEditor extends LitElement {
                 ${this._localize('editor.house_sensor_hint')}
             </div>
 
-            ${this._renderColorPickerQuad('color_house', null, 'color_text_house', 'color_icon_house', '#ff0080')}
+            <ha-selector
+                .hass=${this.hass}
+                .selector=${textSelectorSchema}
+                .value=${this._config.house_label}
+                .configValue=${'house_label'}
+                .label=${this._localize('editor.label') + " (Optional)"}
+                @value-changed=${this._valueChanged}
+            ></ha-selector>
+
+            <ha-selector
+                .hass=${this.hass}
+                .selector=${iconSelectorSchema}
+                .value=${this._config.house_icon}
+                .configValue=${'house_icon'}
+                .label=${this._localize('editor.icon') + " (Optional)"}
+                @value-changed=${this._valueChanged}
+            ></ha-selector>
+
+            ${this._renderEntitySelector(entitySelectorSchema, entities.secondary_house || "", 'secondary_house', this._localize('editor.secondary_sensor'))}
+            ${this._renderColorPickerQuint('color_house', null, 'color_text_house', 'color_icon_house', 'color_secondary_house', '#ff0080')}
         </div>
 
         <div class="consumer-group">
@@ -628,7 +730,7 @@ class PowerFluxCardEditor extends LitElement {
 
             ${this._renderEntitySelector(entitySelectorSchema, entities.secondary_consumer_1 || "", 'secondary_consumer_1', this._localize('editor.secondary_sensor'))}
 
-            ${this._renderColorPickerQuad('color_consumer_1', 'color_pipe_consumer_1', 'color_text_consumer_1', 'color_icon_consumer_1', '#a855f7')}
+            ${this._renderColorPickerQuint('color_consumer_1', 'color_pipe_consumer_1', 'color_text_consumer_1', 'color_icon_consumer_1', 'color_secondary_consumer_1', '#a855f7')}
         </div>
 
         <div class="consumer-group">
@@ -664,13 +766,12 @@ class PowerFluxCardEditor extends LitElement {
 
             ${this._renderEntitySelector(entitySelectorSchema, entities.secondary_consumer_2 || "", 'secondary_consumer_2', this._localize('editor.secondary_sensor'))}
 
-            ${this._renderColorPickerQuad('color_consumer_2', 'color_pipe_consumer_2', 'color_text_consumer_2', 'color_icon_consumer_2', '#f97316')}
+            ${this._renderColorPickerQuint('color_consumer_2', 'color_pipe_consumer_2', 'color_text_consumer_2', 'color_icon_consumer_2', 'color_secondary_consumer_2', '#f97316')}
         </div>
 
         <div class="consumer-group">
             <div class="consumer-title" style="color: #06b6d4;">${this._localize('editor.consumer_3_title')}</div>
             ${this._renderEntitySelector(entitySelectorSchema, entities.consumer_3, 'consumer_3', this._localize('editor.entity'))}
-
             <ha-selector
                 .hass=${this.hass}
                 .selector=${textSelectorSchema}
@@ -679,7 +780,6 @@ class PowerFluxCardEditor extends LitElement {
                 .label=${this._localize('editor.label')}
                 @value-changed=${this._valueChanged}
             ></ha-selector>
-
             <ha-selector
                 .hass=${this.hass}
                 .selector=${iconSelectorSchema}
@@ -688,7 +788,6 @@ class PowerFluxCardEditor extends LitElement {
                 .label=${this._localize('editor.icon')}
                 @value-changed=${this._valueChanged}
             ></ha-selector>
-
             <div style="display: flex; align-items: center; justify-content: space-between; margin-top: 8px; margin-bottom: 8px;">
                 <span>${this._localize('editor.consumer_unit_kw')}</span>
                 <ha-switch
@@ -697,10 +796,68 @@ class PowerFluxCardEditor extends LitElement {
                     @change=${this._valueChanged}
                 ></ha-switch>
             </div>
-
             ${this._renderEntitySelector(entitySelectorSchema, entities.secondary_consumer_3 || "", 'secondary_consumer_3', this._localize('editor.secondary_sensor'))}
-
-            ${this._renderColorPickerQuad('color_consumer_3', 'color_pipe_consumer_3', 'color_text_consumer_3', 'color_icon_consumer_3', '#06b6d4')}
+            ${this._renderColorPickerQuint('color_consumer_3', 'color_pipe_consumer_3', 'color_text_consumer_3', 'color_icon_consumer_3', 'color_secondary_consumer_3', '#06b6d4')}
+        </div>
+        <div class="consumer-group">
+            <div class="consumer-title" style="color: #eab308;">${this._localize('editor.consumer_4_title')}</div>
+            ${this._renderEntitySelector(entitySelectorSchema, entities.consumer_4, 'consumer_4', this._localize('editor.entity'))}
+            <ha-selector
+                .hass=${this.hass}
+                .selector=${textSelectorSchema}
+                .value=${this._config.consumer_4_label}
+                .configValue=${'consumer_4_label'}
+                .label=${this._localize('editor.label')}
+                @value-changed=${this._valueChanged}
+            ></ha-selector>
+            <ha-selector
+                .hass=${this.hass}
+                .selector=${iconSelectorSchema}
+                .value=${this._config.consumer_4_icon}
+                .configValue=${'consumer_4_icon'}
+                .label=${this._localize('editor.icon')}
+                @value-changed=${this._valueChanged}
+            ></ha-selector>
+            <div style="display: flex; align-items: center; justify-content: space-between; margin-top: 8px; margin-bottom: 8px;">
+                <span>${this._localize('editor.consumer_unit_kw')}</span>
+                <ha-switch
+                    .checked=${this._config.consumer_4_unit_kw === true}
+                    .configValue=${'consumer_4_unit_kw'}
+                    @change=${this._valueChanged}
+                ></ha-switch>
+            </div>
+            ${this._renderEntitySelector(entitySelectorSchema, entities.secondary_consumer_4 || "", 'secondary_consumer_4', this._localize('editor.secondary_sensor'))}
+            ${this._renderColorPickerQuint('color_consumer_4', 'color_pipe_consumer_4', 'color_text_consumer_4', 'color_icon_consumer_4', 'color_secondary_consumer_4', '#eab308')}
+        </div>
+        <div class="consumer-group">
+            <div class="consumer-title" style="color: #6366f1;">${this._localize('editor.consumer_5_title')}</div>
+            ${this._renderEntitySelector(entitySelectorSchema, entities.consumer_5, 'consumer_5', this._localize('editor.entity'))}
+            <ha-selector
+                .hass=${this.hass}
+                .selector=${textSelectorSchema}
+                .value=${this._config.consumer_5_label}
+                .configValue=${'consumer_5_label'}
+                .label=${this._localize('editor.label')}
+                @value-changed=${this._valueChanged}
+            ></ha-selector>
+            <ha-selector
+                .hass=${this.hass}
+                .selector=${iconSelectorSchema}
+                .value=${this._config.consumer_5_icon}
+                .configValue=${'consumer_5_icon'}
+                .label=${this._localize('editor.icon')}
+                @value-changed=${this._valueChanged}
+            ></ha-selector>
+            <div style="display: flex; align-items: center; justify-content: space-between; margin-top: 8px; margin-bottom: 8px;">
+                <span>${this._localize('editor.consumer_unit_kw')}</span>
+                <ha-switch
+                    .checked=${this._config.consumer_5_unit_kw === true}
+                    .configValue=${'consumer_5_unit_kw'}
+                    @change=${this._valueChanged}
+                ></ha-switch>
+            </div>
+            ${this._renderEntitySelector(entitySelectorSchema, entities.secondary_consumer_5 || "", 'secondary_consumer_5', this._localize('editor.secondary_sensor'))}
+            ${this._renderColorPickerQuint('color_consumer_5', 'color_pipe_consumer_5', 'color_text_consumer_5', 'color_icon_consumer_5', 'color_secondary_consumer_5', '#6366f1')}
         </div>
       `;
     }
@@ -850,6 +1007,15 @@ class PowerFluxCardEditor extends LitElement {
                 @change=${this._valueChanged}
             ></ha-switch>
             <div class="switch-label">${this._localize('editor.compact_view')}</div>
+        </div>
+
+        <div class="switch-row">
+            <ha-switch
+                .checked=${this._config.compact_details === true} 
+                .configValue=${'compact_details'}
+                @change=${this._valueChanged}
+            ></ha-switch>
+            <div class="switch-label">${this._localize('editor.compact_details')}</div>
         </div>
 		
       </div>

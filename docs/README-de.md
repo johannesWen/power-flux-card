@@ -123,6 +123,14 @@ Mit der [card_mod](https://github.com/thomasloven/lovelace-card-mod) Integration
 | `--consumer-2-color` | Bubble-Farbe Consumer 2 |
 | `--consumer-3-color` | Bubble-Farbe Consumer 3 |
 | `--export-color` | Farbe für Export |
+| `--pipe-solar-opacity` | Pipe-Transparenz Solar (0 = unsichtbar, 1 = sichtbar) |
+| `--pipe-grid-opacity` | Pipe-Transparenz Grid (0 = unsichtbar, 1 = sichtbar) |
+| `--pipe-battery-opacity` | Pipe-Transparenz Batterie (0 = unsichtbar, 1 = sichtbar) |
+| `--pipe-consumer-1-opacity` | Pipe-Transparenz Consumer 1 (0 = unsichtbar, 1 = sichtbar) |
+| `--pipe-consumer-2-opacity` | Pipe-Transparenz Consumer 2 (0 = unsichtbar, 1 = sichtbar) |
+| `--pipe-consumer-3-opacity` | Pipe-Transparenz Consumer 3 (0 = unsichtbar, 1 = sichtbar) |
+| `--pipe-consumer-4-opacity` | Pipe-Transparenz Consumer 4 (0 = unsichtbar, 1 = sichtbar) |
+| `--pipe-consumer-5-opacity` | Pipe-Transparenz Consumer 5 (0 = unsichtbar, 1 = sichtbar) |
 
 ### Beispiel 1: Solar-Icon — grün bei Produktion, grau bei Stillstand
 
@@ -137,9 +145,9 @@ card_mod:
   style: |
     :host {
       {% if states('sensor.solar_power') | float > 0 %}
-        --icon-solar-color: #00ff88;
+        --icon-solar-color: #00ff88 !important;
       {% else %}
-        --icon-solar-color: #9e9e9e;
+        --icon-solar-color: #9e9e9e !important;
       {% endif %}
     }
 ```
@@ -157,9 +165,9 @@ card_mod:
   style: |
     :host {
       {% if states('sensor.grid_power_combined') | float < 0 %}
-        --text-grid-color: #ff3333;
+        --text-grid-color: #ff3333 !important;
       {% else %}
-        --text-grid-color: #3b82f6;
+        --text-grid-color: #3b82f6 !important;
       {% endif %}
     }
 ```
@@ -178,11 +186,11 @@ card_mod:
     :host {
       {% set soc = states('sensor.battery_soc') | float %}
       {% if soc > 80 %}
-        --neon-green: #00ff88;
+        --neon-green: #00ff88 !important;
       {% elif soc > 30 %}
-        --neon-green: #f59e0b;
+        --neon-green: #f59e0b !important;
       {% else %}
-        --neon-green: #ff3333;
+        --neon-green: #ff3333 !important;
       {% endif %}
     }
 ```
@@ -201,16 +209,37 @@ card_mod:
   style: |
     :host {
       {% if states('sensor.wallbox_power') | float > 500 %}
-        --pipe-consumer-1-color: #a855f7;
-        --icon-consumer-1-color: #a855f7;
+        --pipe-consumer-1-color: #a855f7 !important;
+        --icon-consumer-1-color: #a855f7 !important;
       {% else %}
-        --pipe-consumer-1-color: rgba(168, 85, 247, 0.2);
-        --icon-consumer-1-color: #9e9e9e;
+        --pipe-consumer-1-color: rgba(168, 85, 247, 0.2) !important;
+        --icon-consumer-1-color: #9e9e9e !important;
       {% endif %}
     }
 ```
 
-### Beispiel 5: Mehrere Farben gleichzeitig — Nachtmodus (alles gedimmt wenn Solar = 0)
+### Beispiel 5: Solar-Pipe — unter 30 W ausblenden
+
+Blendet die Solar-Pipe aus, wenn die Solar-Leistung unter 30 W liegt.
+
+```yaml
+type: custom:power-flux-card
+entities:
+  solar: sensor.solar_power
+  grid: sensor.grid_power
+  house: sensor.house_power
+card_mod:
+  style: |
+    :host {
+      --pipe-solar-opacity: {{ 1 if (states('sensor.solar_power') | float(0)) >= 30 else 0 }};
+    }
+```
+
+> **Hinweis:** Die Power Flux Card verwendet Shadow DOM (LitElement). Nur CSS Custom Properties auf `:host` funktionieren. Die Card liest die Opacity-Variablen intern aus und wendet sie direkt auf die Pipe-Pfade an.
+
+### Beispiel 6: Mehrere Pipes — jede einzeln unter 30 W ausblenden
+
+Blendet Solar-, Grid- und Batterie-Pipe jeweils unabhängig aus, sobald ihr Wert unter 30 W fällt.
 
 ```yaml
 type: custom:power-flux-card
@@ -218,19 +247,45 @@ entities:
   solar: sensor.solar_power
   grid: sensor.grid_power
   battery: sensor.battery_power
-  battery_soc: sensor.battery_soc
-  consumer_1: sensor.wallbox_power
+  house: sensor.house_power
 card_mod:
   style: |
     :host {
-      {% if states('sensor.solar_power') | float == 0 %}
-        --icon-solar-color: #555555;
-        --text-solar-color: #777777;
-        --neon-yellow: #666633;
-        --pipe-solar-color: #444422;
-      {% endif %}
+      --pipe-solar-opacity:   {{ 1 if (states('sensor.solar_power')   | float(0))       >= 30 else 0.2 }};
+      --pipe-grid-opacity:    {{ 1 if (states('sensor.grid_power')    | float(0)) | abs >= 30 else 0.2 }};
+      --pipe-battery-opacity: {{ 1 if (states('sensor.battery_power') | float(0)) | abs >= 30 else 0.2 }};
     }
 ```
+
+> **Tipp:** `| abs` wird bei Grid und Batterie verwendet, da diese Sensoren negative Werte liefern können (Export / Entladung). Der Schwellenwert bezieht sich immer auf den Absolutwert.
+
+### Beispiel 7: Alle 5 Consumer-Pipes — individuelle Schwellenwerte
+
+Jede Consumer-Pipe wird unabhängig mit eigenem Schwellenwert gesteuert.
+
+```yaml
+type: custom:power-flux-card
+entities:
+  solar: sensor.solar_power
+  grid: sensor.grid_power
+  house: sensor.house_power
+  consumer_1: sensor.wallbox_power
+  consumer_2: sensor.heating_power
+  consumer_3: sensor.pool_power
+  consumer_4: sensor.dishwasher_power
+  consumer_5: sensor.dryer_power
+card_mod:
+  style: |
+    :host {
+      --pipe-consumer-1-opacity: {{ 1 if (states('sensor.wallbox_power')    | float(0)) >= 100 else 0 }};
+      --pipe-consumer-2-opacity: {{ 1 if (states('sensor.heating_power')    | float(0)) >= 50  else 0 }};
+      --pipe-consumer-3-opacity: {{ 1 if (states('sensor.pool_power')       | float(0)) >= 50  else 0 }};
+      --pipe-consumer-4-opacity: {{ 1 if (states('sensor.dishwasher_power') | float(0)) >= 30  else 0 }};
+      --pipe-consumer-5-opacity: {{ 1 if (states('sensor.dryer_power')      | float(0)) >= 30  else 0 }};
+    }
+```
+
+> **Hinweis:** Jede `--pipe-consumer-X-opacity` steuert gleichzeitig die Hintergrundpipe und die animierten Partikel. Auf `0` setzen blendet die Pipe vollständig aus, `1` zeigt sie vollständig an.
 
 > **Hinweis:** card_mod muss separat über HACS installiert werden. Die Templates werden bei jedem State-Update ausgewertet, die Farben ändern sich also in Echtzeit.
 </details>
