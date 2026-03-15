@@ -1634,7 +1634,7 @@ console.log(
         font-weight: bold; font-size: 15px; white-space: nowrap; z-index: 2; transition: color 0.3s ease;
         line-height: 1.2; position: absolute; bottom: 11px; left: 0; width: 100%; text-align: center; margin: 0;
       }
-      .bubble.grid .value, .bubble.house .value { bottom: 13px; }
+      .bubble.grid .value, .bubble.house .value { bottom: 15px; }
       .direction-arrow { font-size: 12px; margin-right: 0px; vertical-align: top; }
       
       @keyframes spin { 100% { transform: rotate(360deg); } }
