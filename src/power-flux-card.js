@@ -1368,7 +1368,7 @@ console.log(
 
       // Diamond layout: solar top, grid left, battery right, house bottom.
       const pathSolarHouse = "M 210 160 L 210 220";
-      const pathSolarBatt = "M 251 134 Q 118 130 329 171";
+      const pathSolarBatt = "M 251 134 Q 251 171 329 171";
       const pathGridImport = "M 91 209 Q 118 250 169 246";
       const pathGridExport = "M 169 134 Q 118 130 91 171";
       const pathHouseExport = "M 169 246 Q 118 250 91 209";
