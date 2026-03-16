@@ -2556,17 +2556,17 @@ console.log(
 
       // Diamond layout: solar top, grid left, battery right, house bottom.
       const pathSolarHouse = "M 210 160 L 210 220";
-      const pathSolarBatt = "M 251 134 Q 300 105 329 171";
-      const pathGridImport = "M 91 209 Q 125 245 169 246";
-      const pathGridExport = "M 169 134 Q 120 105 91 171";
-      const pathHouseExport = "M 169 246 Q 125 245 91 209";
+      const pathSolarBatt = "M 251 134 L 329 171";
+      const pathGridImport = "M 91 209 L 169 246";
+      const pathGridExport = "M 169 134 L 91 171";
+      const pathHouseExport = "M 169 246 L 91 209";
       const exportFromSolar = solarVal > 1;
       const activeExportPath = exportFromSolar ? pathGridExport : pathHouseExport;
-      const exportTextX = exportFromSolar ? '124' : '126';
-      const exportTextY = exportFromSolar ? '120' : '232';
-      const pathGridToBatt = "M 95 190 Q 210 -40 325 190";
-      const pathBattHouse = "M 329 209 Q 295 245 251 246";
-      const pathHouseToBatt = "M 251 246 Q 295 245 329 209";
+      const exportTextX = exportFromSolar ? '124' : '127';
+      const exportTextY = exportFromSolar ? '128' : '235';
+      const pathGridToBatt = "M 95 190 L 325 190";
+      const pathBattHouse = "M 329 209 L 251 246";
+      const pathHouseToBatt = "M 251 246 L 329 209";
       const pathHouseC1 = "M 165 265 Q 50 265 50 370";
       const pathHouseC2 = "M 210 310 L 210 370";
       const pathHouseC3 = "M 255 265 Q 370 265 370 370";
@@ -2622,15 +2622,15 @@ console.log(
                     <path class="flow-line" d="${pathHouseC5}" stroke="${this._getConsumerPipeColor(5)}" style="${getConsumerAnimStyle(showC5, c5Val, 5)}" />
 
                     <text x="237" y="194" class="${textClass} text-solar" style="${getTextStyle(solarToHouse, 'solar')} ${styleSolar}">${this._formatPower(solarToHouse)}</text>
-                    <text x="300" y="112" class="${textClass} text-solar" style="${getTextStyle(solarToBatt, 'solar')} ${styleSolarBatt}">${this._formatPower(solarToBatt)}</text>
+                    <text x="292" y="124" class="${textClass} text-solar" style="${getTextStyle(solarToBatt, 'solar')} ${styleSolarBatt}">${this._formatPower(solarToBatt)}</text>
                     
-                    <text x="126" y="238" class="${textClass} text-grid" style="${getTextStyle(gridToHouse, 'grid')} ${styleGrid}">${this._formatPower(gridToHouse)}</text>
+                    <text x="129" y="237" class="${textClass} text-grid" style="${getTextStyle(gridToHouse, 'grid')} ${styleGrid}">${this._formatPower(gridToHouse)}</text>
                     <text x="${exportTextX}" y="${exportTextY}" class="${textClass} text-export" style="${getTextStyle(gridExport, 'grid')} ${styleGrid}">${this._formatPower(gridExport)}</text>
-                    <text x="210" y="68" class="${textClass} text-grid" style="${getTextStyle(gridToBatt, 'grid')} ${styleGridBatt}">${this._formatPower(gridToBatt)}</text>
+                    <text x="210" y="175" class="${textClass} text-grid" style="${getTextStyle(gridToBatt, 'grid')} ${styleGridBatt}">${this._formatPower(gridToBatt)}</text>
                     
-                    <text x="294" y="238" class="${textClass} text-battery" style="${getTextStyle(batteryDischarge, 'battery')} ${styleBattery}">${this._formatPower(batteryDischarge)}</text>
+                    <text x="291" y="237" class="${textClass} text-battery" style="${getTextStyle(batteryDischarge, 'battery')} ${styleBattery}">${this._formatPower(batteryDischarge)}</text>
 
-                    <text x="294" y="238" class="${textClass} text-battery" style="${(batteryChargeViaHouse && batteryCharge > 0) ? getTextStyle(batteryCharge, 'battery') + ' ' + styleBattery : 'display:none;'}">${this._formatPower(batteryCharge)}</text>
+                    <text x="291" y="237" class="${textClass} text-battery" style="${(batteryChargeViaHouse && batteryCharge > 0) ? getTextStyle(batteryCharge, 'battery') + ' ' + styleBattery : 'display:none;'}">${this._formatPower(batteryCharge)}</text>
 
                 </svg>
 
