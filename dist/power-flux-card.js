@@ -1186,10 +1186,6 @@ class PowerFluxCardEditor extends LitElement {
 customElements.define("power-flux-card-editor", PowerFluxCardEditor);
 
 
-
-
-
-
 console.log(
   "%c⚡ Power Flux Card v_2.4 ready",
   "background: #d19525ff; color: #000; padding: 2px 6px; border-radius: 4px; font-weight: bold;"
@@ -2556,7 +2552,7 @@ console.log(
 
       // Diamond layout: solar top, grid left, battery right, house bottom.
       const pathSolarHouse = "M 210 160 L 210 220";
-      const pathSolarBatt = "M 251 134 Q 294 108 329 171";
+      const pathSolarBatt = "M 251 134 Q 310 133 329 171";
       const pathGridImport = "M 91 209 Q 118 250 169 246";
       const pathGridExport = "M 169 134 Q 118 130 91 171";
       const pathHouseExport = "M 169 246 Q 118 250 91 209";
@@ -2704,4 +2700,3 @@ window.customCards.push({
   name: "Power Flux Card",
   description: "Advanced Animated Energy Flow Card",
 });
-
