@@ -1666,10 +1666,10 @@ console.log(
       .glow.c4 { box-shadow: 0 0 15px color-mix(in srgb, var(--consumer-4-color), transparent 60%); }
       .glow.c5 { box-shadow: 0 0 15px color-mix(in srgb, var(--consumer-5-color), transparent 60%); }
 
-      .node-solar { top: 70px; left: 5px; }     
-      .node-grid { top: 70px; left: 165px; }     
-      .node-battery { top: 70px; left: 325px; }  
-      .node-house { top: 220px; left: 165px; }   
+      .node-solar { top: 70px; left: 165px; }
+      .node-grid { top: 145px; left: 5px; }
+      .node-battery { top: 145px; left: 325px; }
+      .node-house { top: 220px; left: 165px; }
       .node-c1 { top: 370px; left: 5px; }
       .node-c2 { top: 370px; left: 165px; }
       .node-c3 { top: 370px; left: 325px; }
@@ -2316,9 +2316,9 @@ console.log(
       // Grid→Batt pipe: only hide if entities missing; actual visibility handled by getPipeStyle (hideInactive)
       const styleGridBatt = (hasGrid && hasBattery) ? '' : 'display: none;';
 
-      const isTopArcActive = (solarToBatt > 0) && !batteryChargeViaHouse;
       const hasTopRow = hasSolar || hasGrid || hasBattery;
-      const topShift = !hasTopRow ? 190 : ((isTopArcActive || (!hideInactive && hasSolar && hasBattery && batteryCharge > 0 && !batteryChargeViaHouse)) ? 0 : 50);
+      // The diamond layout keeps every main connection inside the same vertical envelope.
+      const topShift = !hasTopRow ? 190 : 50;
       const anyRow2Visible = showC4 || showC5;
       let baseHeight = anyRow2Visible ? 580 : (anyBottomVisible ? 480 : 340);
       const contentHeight = baseHeight - topShift;
@@ -2554,18 +2554,19 @@ console.log(
         return getAnimStyle(val, idx ? `--pipe-consumer-${idx}-opacity` : null);
       };
 
-      const pathSolarHouse = "M 50 160 Q 50 265 165 265";
-      const pathSolarBatt = "M 50 70 Q 210 -20 370 70";
-      const pathGridImport = "M 210 160 L 210 220";
-      const pathGridExport = "M 95 115 Q 130 145 165 115";
-      const pathHouseExport = "M 210 220 L 210 160";
+      // Diamond layout: solar top, grid left, battery right, house bottom.
+      const pathSolarHouse = "M 210 160 L 210 220";
+      const pathSolarBatt = "M 251 134 Q 300 105 329 171";
+      const pathGridImport = "M 91 209 Q 125 245 169 246";
+      const pathGridExport = "M 169 134 Q 120 105 91 171";
+      const pathHouseExport = "M 169 246 Q 125 245 91 209";
       const exportFromSolar = solarVal > 1;
       const activeExportPath = exportFromSolar ? pathGridExport : pathHouseExport;
-      const exportTextX = exportFromSolar ? '130' : '185';
-      const exportTextY = exportFromSolar ? '145' : '195';
-      const pathGridToBatt = "M 255 115 Q 290 145 325 115";
-      const pathBattHouse = "M 370 160 Q 370 265 255 265";
-      const pathHouseToBatt = "M 255 265 Q 370 265 370 160";
+      const exportTextX = exportFromSolar ? '124' : '126';
+      const exportTextY = exportFromSolar ? '120' : '232';
+      const pathGridToBatt = "M 95 190 Q 210 -40 325 190";
+      const pathBattHouse = "M 329 209 Q 295 245 251 246";
+      const pathHouseToBatt = "M 251 246 Q 295 245 329 209";
       const pathHouseC1 = "M 165 265 Q 50 265 50 370";
       const pathHouseC2 = "M 210 310 L 210 370";
       const pathHouseC3 = "M 255 265 Q 370 265 370 370";
@@ -2620,16 +2621,16 @@ console.log(
                     <path class="flow-line" d="${pathHouseC4}" stroke="${this._getConsumerPipeColor(4)}" style="${getConsumerAnimStyle(showC4, c4Val, 4)}" />
                     <path class="flow-line" d="${pathHouseC5}" stroke="${this._getConsumerPipeColor(5)}" style="${getConsumerAnimStyle(showC5, c5Val, 5)}" />
 
-                    <text x="100" y="235" class="${textClass} text-solar" style="${getTextStyle(solarToHouse, 'solar')} ${styleSolar}">${this._formatPower(solarToHouse)}</text>
-                    <text x="210" y="45" class="${textClass} text-solar" style="${getTextStyle(solarToBatt, 'solar')} ${styleSolarBatt}">${this._formatPower(solarToBatt)}</text>
+                    <text x="237" y="194" class="${textClass} text-solar" style="${getTextStyle(solarToHouse, 'solar')} ${styleSolar}">${this._formatPower(solarToHouse)}</text>
+                    <text x="300" y="112" class="${textClass} text-solar" style="${getTextStyle(solarToBatt, 'solar')} ${styleSolarBatt}">${this._formatPower(solarToBatt)}</text>
                     
-                    <text x="235" y="195" class="${textClass} text-grid" style="${getTextStyle(gridToHouse, 'grid')} ${styleGrid}">${this._formatPower(gridToHouse)}</text>
+                    <text x="126" y="238" class="${textClass} text-grid" style="${getTextStyle(gridToHouse, 'grid')} ${styleGrid}">${this._formatPower(gridToHouse)}</text>
                     <text x="${exportTextX}" y="${exportTextY}" class="${textClass} text-export" style="${getTextStyle(gridExport, 'grid')} ${styleGrid}">${this._formatPower(gridExport)}</text>
-                    <text x="290" y="145" class="${textClass} text-grid" style="${getTextStyle(gridToBatt, 'grid')} ${styleGridBatt}">${this._formatPower(gridToBatt)}</text>
+                    <text x="210" y="68" class="${textClass} text-grid" style="${getTextStyle(gridToBatt, 'grid')} ${styleGridBatt}">${this._formatPower(gridToBatt)}</text>
                     
-                    <text x="320" y="235" class="${textClass} text-battery" style="${getTextStyle(batteryDischarge, 'battery')} ${styleBattery}">${this._formatPower(batteryDischarge)}</text>
+                    <text x="294" y="238" class="${textClass} text-battery" style="${getTextStyle(batteryDischarge, 'battery')} ${styleBattery}">${this._formatPower(batteryDischarge)}</text>
 
-                    <text x="320" y="235" class="${textClass} text-battery" style="${(batteryChargeViaHouse && batteryCharge > 0) ? getTextStyle(batteryCharge, 'battery') + ' ' + styleBattery : 'display:none;'}">${this._formatPower(batteryCharge)}</text>
+                    <text x="294" y="238" class="${textClass} text-battery" style="${(batteryChargeViaHouse && batteryCharge > 0) ? getTextStyle(batteryCharge, 'battery') + ' ' + styleBattery : 'display:none;'}">${this._formatPower(batteryCharge)}</text>
 
                 </svg>
 
